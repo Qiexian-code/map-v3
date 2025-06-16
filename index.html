@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>MapCore v0.3</title>
+    <title>MapCore v0.3.1</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
@@ -12,7 +12,16 @@
     <div id="clock"></div>
     <div id="notify" class="hidden"></div>
 
-    <button id="post-btn" onclick="showPostForm()">发起活动</button>
+    <!-- 活动发起按钮+功能菜单 -->
+    <div id="post-menu">
+        <button id="post-btn" onclick="togglePostMenu()">
+            ➕ 发起活动
+        </button>
+        <div id="post-func-list" class="hidden">
+            <button onclick="showPostForm()">✏️ 新建活动</button>
+            <!-- 可扩展更多菜单项 -->
+        </div>
+    </div>
 
     <!-- 发帖表单弹窗 -->
     <div id="post-form" class="hidden">
@@ -26,14 +35,14 @@
         <textarea id="descInput" placeholder="活动描述（可选）" rows="3"></textarea>
         <input id="posterInput" type="text" placeholder="发帖人（可留空）" />
         <textarea id="asciiArtInput" placeholder="符号图（可选，支持ASCII Art）" rows="3"></textarea>
+        <input id="imgUrlInput" type="text" placeholder="图片URL（可选，自动展示）"/>
         <div class="form-actions">
             <button onclick="submitPost()">提交</button>
-            <button onclick="hidePostForm()">取消</button>
+            <button type="button" onclick="hidePostForm()">取消</button>
         </div>
     </div>
 
     <div id="map"></div>
-
     <script src="script.js"></script>
 
 </body>

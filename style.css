@@ -2,7 +2,6 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
 }
-
 #map {
     height: 100vh;
     width: 100vw;
@@ -48,12 +47,18 @@ body {
 }
 #notify.hidden { opacity: 0; pointer-events: none; }
 
-#post-btn {
+/* 活动发起菜单 */
+#post-menu {
     position: absolute;
     top: 120px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#post-btn {
     padding: 10px 30px;
     font-size: 17px;
     border-radius: 9px;
@@ -66,6 +71,34 @@ body {
 }
 #post-btn:hover { background: #1250a3; }
 
+#post-func-list {
+    margin-top: 8px;
+    background: rgba(255,255,255,0.98);
+    border-radius: 8px;
+    box-shadow: 0 2px 16px #d8e4fa;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 150px;
+    gap: 5px;
+    padding: 8px 0;
+}
+#post-func-list button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #1556b6;
+    padding: 6px 16px;
+    text-align: left;
+    border-radius: 5px;
+    transition: background 0.13s;
+    cursor: pointer;
+}
+#post-func-list button:hover {
+    background: #eaf1fd;
+}
+
+/* 发帖表单美化 */
 #post-form {
     position: absolute;
     top: 180px;
@@ -81,7 +114,6 @@ body {
     flex-direction: column;
     gap: 13px;
 }
-
 #post-form input[type="text"], #post-form input[type="date"],
 #post-form textarea {
     padding: 7px 11px;
@@ -90,25 +122,21 @@ body {
     font-size: 15px;
     font-family: inherit;
 }
-
 #post-form textarea {
     resize: vertical;
     min-height: 38px;
     max-height: 160px;
 }
-
 #post-form .address-row {
     display: flex;
     gap: 6px;
 }
-
 #post-form .form-actions {
     display: flex;
     gap: 12px;
     justify-content: flex-end;
     margin-top: 8px;
 }
-
 #post-form button {
     padding: 8px 16px;
     font-size: 15px;
@@ -122,3 +150,9 @@ body {
 #post-form button:hover { background: #1250a3; }
 
 .hidden { display: none; }
+
+.leaflet-popup-content img {
+    max-width: 210px !important;
+    border-radius: 6px;
+    margin-top: 4px;
+}
