@@ -26,7 +26,10 @@
             <input id="addressInput" type="text" placeholder="活动地址（必填，如 1 Market St, SF）" />
             <button type="button" onclick="geocodeAddress(true)">定位</button>
         </div>
-        <input id="dateInput" type="date" />
+        <label for="startTime" style="font-size:15px;margin-bottom:2px;">开始时间</label>
+        <input id="startTime" type="datetime-local" />
+        <label for="endTime" style="font-size:15px;margin-bottom:2px;">结束时间</label>
+        <input id="endTime" type="datetime-local" />
         <textarea id="descInput" placeholder="活动描述（可选）" rows="3"></textarea>
         <input id="posterInput" type="text" placeholder="发帖人（可留空）" />
         <textarea id="mediaInput" placeholder="图片URL" rows="3"></textarea>
@@ -43,6 +46,24 @@
             <button onclick="submitPost()">提交</button>
             <button type="button" onclick="cancelPostForm()">取消</button>
         </div>
+    </div>
+
+    <!-- 活动详情表单弹窗（只读，右上角小叉关闭） -->
+    <div id="detail-form" class="hidden">
+        <button class="close-btn" onclick="hideDetailForm()" title="关闭">&#10005;</button>
+        <h3>活动详情</h3>
+        <input id="detailTitle" type="text" readonly />
+        <div class="address-row">
+            <input id="detailAddress" type="text" readonly />
+            <button type="button" disabled>定位</button>
+        </div>
+        <label for="detailStartTime" style="font-size:15px;margin-bottom:2px;">开始时间</label>
+        <input id="detailStartTime" type="datetime-local" readonly />
+        <label for="detailEndTime" style="font-size:15px;margin-bottom:2px;">结束时间</label>
+        <input id="detailEndTime" type="datetime-local" readonly />
+        <textarea id="detailDesc" rows="3" readonly></textarea>
+        <input id="detailPoster" type="text" readonly />
+        <textarea id="detailMedia" rows="3" readonly></textarea>
     </div>
 
     <div id="map"></div>

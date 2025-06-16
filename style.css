@@ -70,7 +70,7 @@ body {
 }
 #post-btn:hover { background: #1250a3; }
 
-#post-form {
+#post-form, #detail-form {
     position: absolute;
     top: 180px;
     left: 50%;
@@ -85,20 +85,24 @@ body {
     flex-direction: column;
     gap: 13px;
 }
-#post-form input[type="text"], #post-form input[type="date"],
-#post-form textarea {
+
+#post-form input[type="text"], #post-form input[type="date"], #post-form input[type="datetime-local"],
+#post-form textarea,
+#detail-form input[type="text"], #detail-form input[type="date"], #detail-form input[type="datetime-local"],
+#detail-form textarea {
     padding: 7px 11px;
     border: 1px solid #bbb;
     border-radius: 7px;
     font-size: 15px;
     font-family: inherit;
 }
-#post-form textarea {
+
+#post-form textarea, #detail-form textarea {
     resize: vertical;
     min-height: 38px;
     max-height: 160px;
 }
-#post-form .address-row {
+#post-form .address-row, #detail-form .address-row {
     display: flex;
     gap: 6px;
 }
@@ -135,10 +139,28 @@ body {
 }
 
 .hidden { display: none; }
-#post-form.hidden { display: none !important; }
+#post-form.hidden, #detail-form.hidden { display: none !important; }
 
 .leaflet-popup-content img {
     max-width: 210px !important;
     border-radius: 6px;
     margin-top: 4px;
+}
+
+/* 详情表单右上角关闭按钮（小叉） */
+#detail-form .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    color: #888;
+    cursor: pointer;
+    padding: 0;
+    z-index: 2;
+    transition: color 0.18s;
+}
+#detail-form .close-btn:hover {
+    color: #d82323;
 }

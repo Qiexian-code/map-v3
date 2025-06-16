@@ -36,7 +36,7 @@ function togglePostForm() {
 
 // 只清空输入内容
 function clearPostForm() {
-    ["titleInput", "addressInput", "dateInput", "descInput", "posterInput", "mediaInput"].forEach(id => {
+    ["titleInput", "addressInput", "startTime", "endTime", "descInput", "posterInput", "mediaInput"].forEach(id => {
         document.getElementById(id).value = "";
     });
     tempLatLng = null;
@@ -85,17 +85,34 @@ function isImageURL(url) {
     return /\.(png|jpg|jpeg|gif|bmp|svg|webp)(\?.*)?$/i.test(url);
 }
 
+// 时间格式化
+function formatTime(dtstr) {
+    if (!dtstr) return "";
+    // "2024-06-19T08:30" => "6月19日 08:30"
+    let d = new Date(dtstr);
+    let m = d.getMonth() + 1;
+    let day = d.getDate();
+    let hour = d.getHours().toString().padStart(2, '0');
+    let min = d.getMinutes().toString().padStart(2, '0');
+    return `${m}月${day}日 ${hour}:${min}`;
+}
+
 // 发帖提交
 function submitPost() {
     const title = document.getElementById("titleInput").value.trim();
     const address = document.getElementById("addressInput").value.trim();
-    const date = document.getElementById("dateInput").value;
+    const startTime = document.getElementById("startTime").value;
+    const endTime = document.getElementById("endTime").value;
     const desc = document.getElementById("descInput").value.trim();
     const poster = document.getElementById("posterInput").value.trim();
     const media = document.getElementById("mediaInput").value.trim();
 
-    if (!title || !address || !date) {
-        notify("请填写完整标题、地址和活动日期！");
+    if (!title || !address || !startTime || !endTime) {
+        notify("请填写完整标题、地址和活动时间！");
+        return;
+    }
+    if (startTime > endTime) {
+        notify("开始时间不能晚于结束时间！");
         return;
     }
     if (!tempLatLng) {
@@ -104,7 +121,7 @@ function submitPost() {
     }
 
     const post = {
-        title, address, date, desc, poster, media,
+        title, address, startTime, endTime, desc, poster, media,
         lat: tempLatLng[0], lng: tempLatLng[1],
         postedAt: new Date().toISOString()
     };
@@ -122,13 +139,21 @@ function submitPost() {
         }
     }
 
+    // Popup加详情按钮
+    let idx = posts.length - 1;
     let popup = `
         <b>${post.title}</b><br>
-        <span style="color:#357">${post.date}</span><br>
+        <span style="color:#357">
+            开始：${formatTime(post.startTime)}<br>
+            结束：${formatTime(post.endTime)}
+        </span><br>
         <span style="color:#888">${post.address}</span><br>
         ${post.desc ? `<div style="margin:5px 0">${post.desc}</div>` : ""}
         ${post.poster ? `<div style="color:#247;font-size:14px;">发帖人：${post.poster}</div>` : ""}
         ${mediaContent}
+        <div style="text-align:right;margin-top:6px;">
+          <button onclick='window._showDetailFromPopup(${idx})' style="font-size:13px;padding:3px 12px;">详情</button>
+        </div>
     `;
 
     L.marker([post.lat, post.lng]).addTo(map).bindPopup(popup).openPopup();
@@ -136,4 +161,24 @@ function submitPost() {
     notify("活动发布成功！", 1600);
     document.getElementById("post-form").classList.add("hidden");
     clearPostForm();
+}
+
+// “详情”弹窗支持
+window._showDetailFromPopup = function(idx) {
+    showDetailForm(posts[idx]);
+};
+
+function showDetailForm(post) {
+    document.getElementById("detailTitle").value = post.title || "";
+    document.getElementById("detailAddress").value = post.address || "";
+    document.getElementById("detailStartTime").value = post.startTime || "";
+    document.getElementById("detailEndTime").value = post.endTime || "";
+    document.getElementById("detailDesc").value = post.desc || "";
+    document.getElementById("detailPoster").value = post.poster || "";
+    document.getElementById("detailMedia").value = post.media || "";
+    document.getElementById("detail-form").classList.remove("hidden");
+}
+
+function hideDetailForm() {
+    document.getElementById("detail-form").classList.add("hidden");
 }
