@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MyMapProject</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="assets/favicon.ico">
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+</head>
+<body>
+    <div id="map"></div>
+
+    <div id="control-panel">
+        <button onclick="toggleAdminMode()">管理员模式</button>
+        <button onclick="toggleTheme()">日夜切换</button>
+        <button onclick="showPostForm()">发起活动</button>
+    </div>
+
+    <div id="post-form" class="hidden">
+        <h3>新建活动</h3>
+        <input id="posterName" placeholder="发帖人 (可选)">
+        <input id="address" placeholder="你的认证地址">
+        <input id="title" placeholder="活动标题">
+        <textarea id="desc" placeholder="活动描述"></textarea>
+        <input id="time" type="date">
+        <input id="lat" placeholder="纬度 (自动填)" readonly>
+        <input id="lng" placeholder="经度 (自动填)" readonly>
+        <textarea id="symbolArt" placeholder="符号图 (ASCII Art 可选)" rows="5"></textarea>
+        <button onclick="submitNewPost()">提交活动</button>
+        <button onclick="hidePostForm()">取消</button>
+    </div>
+
+    <div id="announcement" class="hidden"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
