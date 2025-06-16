@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>MapCore v0.1.1</title>
+    <title>MapCore v0.2.1</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
@@ -10,6 +10,13 @@
 <body>
 
     <div id="clock"></div>
+
+    <div id="address-panel">
+        <input id="addressInput" type="text" placeholder="输入地址，如 1 Market St, San Francisco" />
+        <button onclick="geocodeAddress()">定位</button>
+    </div>
+
+    <div id="notify" class="hidden"></div>
 
     <div id="map"></div>
 
