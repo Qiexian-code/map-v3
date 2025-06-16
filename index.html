@@ -13,7 +13,7 @@
     <div id="notify" class="hidden"></div>
 
     <div id="post-menu">
-        <button id="post-btn" onclick="showPostForm()">
+        <button id="post-btn" onclick="togglePostForm()">
             ➕ 发起活动
         </button>
     </div>
@@ -41,8 +41,7 @@
         </div>
         <div class="form-actions">
             <button onclick="submitPost()">提交</button>
-            <button type="button" onclick="clearPostForm()">取消</button>
-            <button type="button" onclick="hidePostForm()" style="margin-left:auto;">收起</button>
+            <button type="button" onclick="cancelPostForm()">取消</button>
         </div>
     </div>
 

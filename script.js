@@ -23,12 +23,18 @@ function notify(msg, timeout = 2000) {
     }, timeout);
 }
 
-// 显示发帖表单
-function showPostForm() {
-    document.getElementById("post-form").classList.remove("hidden");
+// 发帖表单开关
+function togglePostForm() {
+    const form = document.getElementById("post-form");
+    if (form.classList.contains("hidden")) {
+        form.classList.remove("hidden");
+    } else {
+        form.classList.add("hidden");
+        clearPostForm();
+    }
 }
 
-// 只清空输入内容，不收起表单
+// 只清空输入内容
 function clearPostForm() {
     ["titleInput", "addressInput", "dateInput", "descInput", "posterInput", "mediaInput"].forEach(id => {
         document.getElementById(id).value = "";
@@ -37,10 +43,10 @@ function clearPostForm() {
     if (marker) { map.removeLayer(marker); marker = null; }
 }
 
-// 隐藏发帖表单，并清空内容
-function hidePostForm() {
-    document.getElementById("post-form").classList.add("hidden");
+// “取消”按钮：清空内容并收起表单
+function cancelPostForm() {
     clearPostForm();
+    document.getElementById("post-form").classList.add("hidden");
 }
 
 // 地址地理编码 + 标点
@@ -111,7 +117,7 @@ function submitPost() {
             // 图片模式，onerror降级为文本
             mediaContent = `<img src="${media}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;" onerror="this.outerHTML='<pre>${media.replace(/</g,'&lt;')}</pre>'">`;
         } else {
-            // 普通文本/符号画（如果需要，原逻辑保留）
+            // 普通文本/符号画
             mediaContent = `<pre>${media.replace(/</g,'&lt;')}</pre>`;
         }
     }
@@ -128,5 +134,6 @@ function submitPost() {
     L.marker([post.lat, post.lng]).addTo(map).bindPopup(popup).openPopup();
 
     notify("活动发布成功！", 1600);
-    hidePostForm();
+    document.getElementById("post-form").classList.add("hidden");
+    clearPostForm();
 }

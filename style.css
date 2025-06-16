@@ -120,13 +120,6 @@ body {
 }
 #post-form button:hover { background: #1250a3; }
 
-.hidden { display: none; }
-
-.leaflet-popup-content img {
-    max-width: 210px !important;
-    border-radius: 6px;
-    margin-top: 4px;
-}
 .media-tutorial {
     margin-top: -8px;
     margin-bottom: 4px;
@@ -141,3 +134,11 @@ body {
     text-decoration: underline;
 }
 
+.hidden { display: none; }
+#post-form.hidden { display: none !important; }
+
+.leaflet-popup-content img {
+    max-width: 210px !important;
+    border-radius: 6px;
+    margin-top: 4px;
+}
