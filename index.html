@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>MapCore v0.2.1</title>
+    <title>MapCore v0.3</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
@@ -10,13 +10,27 @@
 <body>
 
     <div id="clock"></div>
-
-    <div id="address-panel">
-        <input id="addressInput" type="text" placeholder="输入地址，如 1 Market St, San Francisco" />
-        <button onclick="geocodeAddress()">定位</button>
-    </div>
-
     <div id="notify" class="hidden"></div>
+
+    <button id="post-btn" onclick="showPostForm()">发起活动</button>
+
+    <!-- 发帖表单弹窗 -->
+    <div id="post-form" class="hidden">
+        <h3>发起新活动</h3>
+        <input id="titleInput" type="text" placeholder="活动标题（必填）" />
+        <div class="address-row">
+            <input id="addressInput" type="text" placeholder="活动地址（必填，如 1 Market St, SF）" />
+            <button type="button" onclick="geocodeAddress(true)">定位</button>
+        </div>
+        <input id="dateInput" type="date" />
+        <textarea id="descInput" placeholder="活动描述（可选）" rows="3"></textarea>
+        <input id="posterInput" type="text" placeholder="发帖人（可留空）" />
+        <textarea id="asciiArtInput" placeholder="符号图（可选，支持ASCII Art）" rows="3"></textarea>
+        <div class="form-actions">
+            <button onclick="submitPost()">提交</button>
+            <button onclick="hidePostForm()">取消</button>
+        </div>
+    </div>
 
     <div id="map"></div>
 
