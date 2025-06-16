@@ -91,7 +91,6 @@ function formatTime(dtstr) {
     let min = d.getMinutes().toString().padStart(2, '0');
     return `${m}月${day}日 ${hour}:${min}`;
 }
-
 // 发帖提交
 function submitPost() {
     const title = document.getElementById("titleInput").value.trim();
@@ -175,4 +174,34 @@ function showDetailForm(post) {
     document.getElementById("detailDesc").value = post.desc || "";
     document.getElementById("detailPoster").value = post.poster || "";
 
-    // 图片：有则直接
+    // 详细图片展示
+    let detailMediaWrap = document.getElementById("detailMediaWrap");
+    detailMediaWrap.innerHTML = "";
+    if (post.media && isImageURL(post.media)) {
+        let img = document.createElement("img");
+        img.src = post.media;
+        img.style.maxWidth = "210px";
+        img.style.maxHeight = "120px";
+        img.style.borderRadius = "7px";
+        img.style.cursor = "pointer";
+        img.alt = "活动图片";
+        img.onclick = function(e) {
+            showImgViewer(post.media);
+            e.stopPropagation();
+        };
+        detailMediaWrap.appendChild(img);
+    } else if (post.media) {
+        let pre = document.createElement("pre");
+        pre.innerText = post.media;
+        detailMediaWrap.appendChild(pre);
+    }
+    document.getElementById("detail-form").classList.remove("hidden");
+}
+
+function showImgViewer(url) {
+    document.getElementById("img-viewer-img").src = url;
+    document.getElementById("img-viewer").classList.remove("hidden");
+}
+function hideImgViewer() {
+    document.getElementById("img-viewer").classList.add("hidden");
+}
