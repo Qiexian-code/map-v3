@@ -27,14 +27,20 @@ function notify(msg, timeout = 2000) {
 function showPostForm() {
     document.getElementById("post-form").classList.remove("hidden");
 }
-// 隐藏发帖表单（清除临时状态）
-function hidePostForm() {
-    document.getElementById("post-form").classList.add("hidden");
-    ["titleInput","addressInput","dateInput","descInput","posterInput","mediaInput"].forEach(id=>{
+
+// 只清空输入内容，不收起表单
+function clearPostForm() {
+    ["titleInput", "addressInput", "dateInput", "descInput", "posterInput", "mediaInput"].forEach(id => {
         document.getElementById(id).value = "";
     });
     tempLatLng = null;
     if (marker) { map.removeLayer(marker); marker = null; }
+}
+
+// 隐藏发帖表单，并清空内容
+function hidePostForm() {
+    document.getElementById("post-form").classList.add("hidden");
+    clearPostForm();
 }
 
 // 地址地理编码 + 标点
@@ -105,7 +111,7 @@ function submitPost() {
             // 图片模式，onerror降级为文本
             mediaContent = `<img src="${media}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;" onerror="this.outerHTML='<pre>${media.replace(/</g,'&lt;')}</pre>'">`;
         } else {
-            // 符号画/普通文本
+            // 普通文本/符号画（如果需要，原逻辑保留）
             mediaContent = `<pre>${media.replace(/</g,'&lt;')}</pre>`;
         }
     }

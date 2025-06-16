@@ -127,4 +127,17 @@ body {
     border-radius: 6px;
     margin-top: 4px;
 }
+.media-tutorial {
+    margin-top: -8px;
+    margin-bottom: 4px;
+    padding-left: 2px;
+    color: #888;
+    font-size: 13px;
+    line-height: 1.5;
+    word-break: break-all;
+}
+.media-tutorial a {
+    color: #2060d8;
+    text-decoration: underline;
+}
 
