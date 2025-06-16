@@ -36,7 +36,7 @@ fetch('data.json')
 
 function renderPosts() {
     posts.forEach(post => {
-        const timeText = post.time ? `<b>活动时间：</b> ${formatDate(post.time)}<br>` : '';
+        const timeText = post.time ? `<b>活动举办日期：</b> ${formatDate(post.time)}<br>` : '';
         const marker = L.marker([post.lat, post.lng]).addTo(map);
         marker.bindPopup(`
             <b>${post.title}</b><br>
@@ -50,7 +50,7 @@ function renderPosts() {
 
 function formatDate(dateStr) {
     const date = new Date(dateStr);
-    return date.toLocaleDateString();
+    return date.toLocaleString();
 }
 
 function cleanExpiredPosts() {
@@ -80,13 +80,14 @@ function submitNewPost() {
     const lat = document.getElementById("lat").value;
     const lng = document.getElementById("lng").value;
     const symbol = document.getElementById("symbolArt").value;
+    const postedAt = new Date().toISOString();
 
     if (!address || !title || !time || !lat || !lng) {
         alert("请填写完整信息！");
         return;
     }
 
-    const newPost = { poster, address, title, desc, time, lat, lng, symbol };
+    const newPost = { poster, address, title, desc, time, postedAt, lat, lng, symbol };
     posts.push(newPost);
     savePosts();
     location.reload();
@@ -109,4 +110,12 @@ window.onload = () => {
     setTimeout(() => {
         announcement.classList.add("hidden");
     }, 5000);
+    updateClock();
 };
+
+function updateClock() {
+    const now = new Date();
+    document.getElementById("clock").innerText = now.toLocaleString();
+}
+
+setInterval(updateClock, 1000);
