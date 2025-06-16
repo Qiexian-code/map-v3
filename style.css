@@ -8,20 +8,17 @@ body {
     width: 100vw;
 }
 
-#daynight-toggle {
+#clock {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 1000;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 6px 10px;
-    border-radius: 5px;
-    box-shadow: 0 0 5px #aaa;
-}
-
-#daynight-toggle button {
-    font-size: 20px;
-    background: none;
-    border: none;
-    cursor: pointer;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 0 8px rgba(0,0,0,0.3);
 }
