@@ -2,7 +2,6 @@ let map = L.map('map').setView([37.7749, -122.4194], 13);
 let tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 tileLayer.addTo(map);
 
-let marker = null;
 let tempLatLng = null;
 
 // 系统时间模块
@@ -40,7 +39,6 @@ function clearPostForm() {
         document.getElementById(id).value = "";
     });
     tempLatLng = null;
-    if (marker) { map.removeLayer(marker); marker = null; }
 }
 
 // “取消”按钮：清空内容并收起表单
@@ -49,7 +47,7 @@ function cancelPostForm() {
     document.getElementById("post-form").classList.add("hidden");
 }
 
-// 地址地理编码 + 标点
+// 地址地理编码 + 标点（只移动视角，不加marker和popup）
 function geocodeAddress(focus) {
     const address = document.getElementById("addressInput").value.trim();
     if (!address) {
@@ -69,8 +67,7 @@ function geocodeAddress(focus) {
             if (focus) {
                 map.setView([lat, lon], 16);
             }
-            if (marker) map.removeLayer(marker);
-            marker = L.marker([lat, lon]).addTo(map).bindPopup("活动地址定位成功！").openPopup();
+            // 不再添加marker和popup
         })
         .catch(err => {
             notify("地理编码服务异常，请稍后再试。");
@@ -88,7 +85,6 @@ function isImageURL(url) {
 // 时间格式化
 function formatTime(dtstr) {
     if (!dtstr) return "";
-    // "2024-06-19T08:30" => "6月19日 08:30"
     let d = new Date(dtstr);
     let m = d.getMonth() + 1;
     let day = d.getDate();
@@ -131,15 +127,12 @@ function submitPost() {
     let mediaContent = "";
     if (media) {
         if (isImageURL(media)) {
-            // 图片模式，onerror降级为文本
             mediaContent = `<img src="${media}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;" onerror="this.outerHTML='<pre>${media.replace(/</g,'&lt;')}</pre>'">`;
         } else {
-            // 普通文本/符号画
             mediaContent = `<pre>${media.replace(/</g,'&lt;')}</pre>`;
         }
     }
 
-    // Popup加详情按钮
     let idx = posts.length - 1;
     let popup = `
         <b>${post.title}</b><br>
