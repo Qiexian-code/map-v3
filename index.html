@@ -12,14 +12,11 @@
     <div id="clock"></div>
     <div id="notify" class="hidden"></div>
 
-    <!-- 活动发起按钮+功能菜单 -->
+    <!-- 只保留一个发起活动按钮 -->
     <div id="post-menu">
-        <button id="post-btn" onclick="togglePostMenu()">
+        <button id="post-btn" onclick="showPostForm()">
             ➕ 发起活动
         </button>
-        <div id="post-func-list" class="hidden">
-            <button onclick="showPostForm()">✏️ 新建活动</button>
-        </div>
     </div>
 
     <!-- 发帖表单弹窗 -->

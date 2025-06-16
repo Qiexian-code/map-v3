@@ -23,26 +23,9 @@ function notify(msg, timeout = 2000) {
     }, timeout);
 }
 
-// 展开/收起功能菜单
-function togglePostMenu() {
-    const list = document.getElementById("post-func-list");
-    list.classList.toggle("hidden");
-    // 点击别处自动收起
-    if (!list.classList.contains("hidden")) {
-        document.addEventListener("mousedown", outsideMenuHandler);
-    }
-    function outsideMenuHandler(e) {
-        if (!document.getElementById("post-menu").contains(e.target)) {
-            list.classList.add("hidden");
-            document.removeEventListener("mousedown", outsideMenuHandler);
-        }
-    }
-}
-
 // 显示发帖表单
 function showPostForm() {
     document.getElementById("post-form").classList.remove("hidden");
-    document.getElementById("post-func-list").classList.add("hidden");
 }
 // 隐藏发帖表单（清除临时状态）
 function hidePostForm() {
