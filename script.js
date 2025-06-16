@@ -67,7 +67,6 @@ function geocodeAddress(focus) {
             if (focus) {
                 map.setView([lat, lon], 16);
             }
-            // 不再添加marker和popup
         })
         .catch(err => {
             notify("地理编码服务异常，请稍后再试。");
@@ -135,6 +134,7 @@ function submitPost() {
 
     let idx = posts.length - 1;
     let popup = `
+      <div class="popup-inner" data-idx="${idx}" style="cursor:pointer;">
         <b>${post.title}</b><br>
         <span style="color:#357">
             开始：${formatTime(post.startTime)}<br>
@@ -144,23 +144,29 @@ function submitPost() {
         ${post.desc ? `<div style="margin:5px 0">${post.desc}</div>` : ""}
         ${post.poster ? `<div style="color:#247;font-size:14px;">发帖人：${post.poster}</div>` : ""}
         ${mediaContent}
-        <div style="text-align:right;margin-top:6px;">
-          <button onclick='window._showDetailFromPopup(${idx})' style="font-size:13px;padding:3px 12px;">详情</button>
-        </div>
+      </div>
     `;
 
-    L.marker([post.lat, post.lng]).addTo(map).bindPopup(popup).openPopup();
+    let marker = L.marker([post.lat, post.lng]).addTo(map).bindPopup(popup).openPopup();
+    post._marker = marker;
+
+    marker.on('popupopen', function() {
+        setTimeout(() => { // 等待popup渲染
+            let popupEl = document.querySelector('.popup-inner[data-idx="'+idx+'"]');
+            if (popupEl) {
+                popupEl.onclick = function(e) {
+                    showDetailForm(posts[idx]);
+                };
+            }
+        }, 0);
+    });
 
     notify("活动发布成功！", 1600);
     document.getElementById("post-form").classList.add("hidden");
     clearPostForm();
 }
 
-// “详情”弹窗支持
-window._showDetailFromPopup = function(idx) {
-    showDetailForm(posts[idx]);
-};
-
+// 详情表单图片大图查看
 function showDetailForm(post) {
     document.getElementById("detailTitle").value = post.title || "";
     document.getElementById("detailAddress").value = post.address || "";
@@ -168,10 +174,5 @@ function showDetailForm(post) {
     document.getElementById("detailEndTime").value = post.endTime || "";
     document.getElementById("detailDesc").value = post.desc || "";
     document.getElementById("detailPoster").value = post.poster || "";
-    document.getElementById("detailMedia").value = post.media || "";
-    document.getElementById("detail-form").classList.remove("hidden");
-}
 
-function hideDetailForm() {
-    document.getElementById("detail-form").classList.add("hidden");
-}
+    // 图片：有则直接

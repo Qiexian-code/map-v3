@@ -63,7 +63,13 @@
         <input id="detailEndTime" type="datetime-local" readonly />
         <textarea id="detailDesc" rows="3" readonly></textarea>
         <input id="detailPoster" type="text" readonly />
-        <textarea id="detailMedia" rows="3" readonly></textarea>
+        <div id="detailMediaWrap"></div>
+    </div>
+
+    <!-- 详细大图预览蒙层 -->
+    <div id="img-viewer" class="hidden" onclick="hideImgViewer()">
+        <img id="img-viewer-img" src="" alt="预览图片">
+        <button class="close-btn" onclick="hideImgViewer();event.stopPropagation();" title="关闭">&#10005;</button>
     </div>
 
     <div id="map"></div>
