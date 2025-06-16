@@ -27,6 +27,16 @@ function notify(msg, timeout = 2000) {
 function togglePostMenu() {
     const list = document.getElementById("post-func-list");
     list.classList.toggle("hidden");
+    // 点击别处自动收起
+    if (!list.classList.contains("hidden")) {
+        document.addEventListener("mousedown", outsideMenuHandler);
+    }
+    function outsideMenuHandler(e) {
+        if (!document.getElementById("post-menu").contains(e.target)) {
+            list.classList.add("hidden");
+            document.removeEventListener("mousedown", outsideMenuHandler);
+        }
+    }
 }
 
 // 显示发帖表单
@@ -37,12 +47,10 @@ function showPostForm() {
 // 隐藏发帖表单（清除临时状态）
 function hidePostForm() {
     document.getElementById("post-form").classList.add("hidden");
-    // 清空表单内容
-    ["titleInput","addressInput","dateInput","descInput","posterInput","asciiArtInput","imgUrlInput"].forEach(id=>{
+    ["titleInput","addressInput","dateInput","descInput","posterInput","mediaInput"].forEach(id=>{
         document.getElementById(id).value = "";
     });
     tempLatLng = null;
-    // 移除预览marker
     if (marker) { map.removeLayer(marker); marker = null; }
 }
 
@@ -66,7 +74,6 @@ function geocodeAddress(focus) {
             if (focus) {
                 map.setView([lat, lon], 16);
             }
-            // 预览marker
             if (marker) map.removeLayer(marker);
             marker = L.marker([lat, lon]).addTo(map).bindPopup("活动地址定位成功！").openPopup();
         })
@@ -78,6 +85,11 @@ function geocodeAddress(focus) {
 // 发帖内容临时存储
 let posts = [];
 
+// 极简图片URL检测（判断是不是图片）
+function isImageURL(url) {
+    return /\.(png|jpg|jpeg|gif|bmp|svg|webp)(\?.*)?$/i.test(url);
+}
+
 // 发帖提交
 function submitPost() {
     const title = document.getElementById("titleInput").value.trim();
@@ -85,8 +97,7 @@ function submitPost() {
     const date = document.getElementById("dateInput").value;
     const desc = document.getElementById("descInput").value.trim();
     const poster = document.getElementById("posterInput").value.trim();
-    const asciiArt = document.getElementById("asciiArtInput").value.trim();
-    const imgUrl = document.getElementById("imgUrlInput").value.trim();
+    const media = document.getElementById("mediaInput").value.trim();
 
     if (!title || !address || !date) {
         notify("请填写完整标题、地址和活动日期！");
@@ -98,21 +109,31 @@ function submitPost() {
     }
 
     const post = {
-        title, address, date, desc, poster, asciiArt, imgUrl,
+        title, address, date, desc, poster, media,
         lat: tempLatLng[0], lng: tempLatLng[1],
         postedAt: new Date().toISOString()
     };
     posts.push(post);
 
-    // 拼接弹窗内容
+    // 判断media内容如何展示
+    let mediaContent = "";
+    if (media) {
+        if (isImageURL(media)) {
+            // 图片模式，onerror降级为文本
+            mediaContent = `<img src="${media}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;" onerror="this.outerHTML='<pre>${media.replace(/</g,'&lt;')}</pre>'">`;
+        } else {
+            // 符号画/普通文本
+            mediaContent = `<pre>${media.replace(/</g,'&lt;')}</pre>`;
+        }
+    }
+
     let popup = `
         <b>${post.title}</b><br>
         <span style="color:#357">${post.date}</span><br>
         <span style="color:#888">${post.address}</span><br>
         ${post.desc ? `<div style="margin:5px 0">${post.desc}</div>` : ""}
         ${post.poster ? `<div style="color:#247;font-size:14px;">发帖人：${post.poster}</div>` : ""}
-        ${post.asciiArt ? `<pre>${post.asciiArt}</pre>` : ""}
-        ${post.imgUrl ? `<img src="${post.imgUrl}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;">` : ""}
+        ${mediaContent}
     `;
 
     L.marker([post.lat, post.lng]).addTo(map).bindPopup(popup).openPopup();

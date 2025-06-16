@@ -47,7 +47,6 @@ body {
 }
 #notify.hidden { opacity: 0; pointer-events: none; }
 
-/* 活动发起菜单 */
 #post-menu {
     position: absolute;
     top: 120px;
@@ -70,7 +69,6 @@ body {
     box-shadow: 0 2px 8px #bbb;
 }
 #post-btn:hover { background: #1250a3; }
-
 #post-func-list {
     margin-top: 8px;
     background: rgba(255,255,255,0.98);
@@ -83,6 +81,7 @@ body {
     gap: 5px;
     padding: 8px 0;
 }
+#post-func-list.hidden { display: none; }
 #post-func-list button {
     background: none;
     border: none;
@@ -98,7 +97,6 @@ body {
     background: #eaf1fd;
 }
 
-/* 发帖表单美化 */
 #post-form {
     position: absolute;
     top: 180px;
