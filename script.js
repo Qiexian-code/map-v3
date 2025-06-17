@@ -205,3 +205,6 @@ function showImgViewer(url) {
 function hideImgViewer() {
     document.getElementById("img-viewer").classList.add("hidden");
 }
+function hideDetailForm() {
+    document.getElementById("detail-form").classList.add("hidden");
+}
