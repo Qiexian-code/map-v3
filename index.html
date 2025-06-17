@@ -64,6 +64,16 @@
         <textarea id="detailDesc" rows="3" readonly></textarea>
         <input id="detailPoster" type="text" readonly />
         <div id="detailMediaWrap"></div>
+        <!-- 修改/删除按钮组 -->
+        <div class="form-actions" id="detailActions">
+            <button id="editBtn" onclick="editDetailPost()">修改</button>
+            <button id="deleteBtn" onclick="deleteDetailPost()">删除</button>
+        </div>
+        <!-- 保存/取消按钮组 -->
+        <div class="form-actions hidden" id="saveActions">
+            <button onclick="saveDetailEdit()">保存</button>
+            <button onclick="cancelDetailEdit()">取消</button>
+        </div>
     </div>
 
     <!-- 详细大图预览蒙层 -->

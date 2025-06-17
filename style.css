@@ -106,13 +106,13 @@ body {
     display: flex;
     gap: 6px;
 }
-#post-form .form-actions {
+.form-actions {
     display: flex;
     gap: 12px;
     justify-content: flex-end;
     margin-top: 8px;
 }
-#post-form button {
+#post-form button, #detail-form button {
     padding: 8px 16px;
     font-size: 15px;
     border-radius: 7px;
@@ -122,7 +122,7 @@ body {
     font-weight: 600;
     cursor: pointer;
 }
-#post-form button:hover { background: #1250a3; }
+#post-form button:hover, #detail-form button:hover { background: #1250a3; }
 
 .media-tutorial {
     margin-top: -8px;
@@ -137,6 +137,7 @@ body {
     color: #2060d8;
     text-decoration: underline;
 }
+
 .hidden { display: none; }
 #post-form.hidden, #detail-form.hidden { display: none !important; }
 
