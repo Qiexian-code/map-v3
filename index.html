@@ -26,10 +26,14 @@
             <input id="addressInput" type="text" placeholder="活动地址（必填，如 1 Market St, SF）" />
             <button type="button" onclick="geocodeAddress(true)">定位</button>
         </div>
-        <label for="startTime" style="font-size:15px;margin-bottom:2px;">开始时间</label>
-        <input id="startTime" type="datetime-local" />
-        <label for="endTime" style="font-size:15px;margin-bottom:2px;">结束时间</label>
-        <input id="endTime" type="datetime-local" />
+        <div class="row-group">
+            <label for="startTime">开始时间</label>
+            <input id="startTime" type="datetime-local" />
+        </div>
+        <div class="row-group">
+            <label for="endTime">结束时间</label>
+            <input id="endTime" type="datetime-local" />
+        </div>
         <textarea id="descInput" placeholder="活动描述（可选）" rows="3"></textarea>
         <input id="posterInput" type="text" placeholder="发帖人（可留空）" />
         <textarea id="mediaInput" placeholder="图片URL（支持多条，换行或空格分隔）" rows="3" oninput="refreshPostMediaPreview()"></textarea>
@@ -53,17 +57,33 @@
     <div id="detail-form" class="hidden">
         <button class="close-btn" onclick="hideDetailForm()" title="关闭">&#10005;</button>
         <h3>活动详情</h3>
+        <input id="detailTitle" type="text" readonly placeholder="活动标题" />
         <div class="address-row">
-            <input id="detailTitle" type="text" readonly style="flex:1" placeholder="活动标题" />
-        </div>
-        <div class="address-row">
-            <input id="detailAddress" type="text" readonly style="flex:1" placeholder="活动地址" />
+            <input id="detailAddress" type="text" readonly placeholder="活动地址" />
             <button type="button" id="detailLocateBtn" onclick="geocodeDetailAddress(true)" disabled>定位</button>
         </div>
-        <label for="detailStartTime" style="font-size:15px;margin-bottom:2px;">开始时间</label>
-        <input id="detailStartTime" type="datetime-local" readonly />
-        <label for="detailEndTime" style="font-size:15px;margin-bottom:2px;">结束时间</label>
-        <input id="detailEndTime" type="datetime-local" readonly />
+        <!-- 只读时间区 -->
+        <div id="detailTimeView">
+            <div class="row-group">
+                <label for="detailStartTime">开始时间</label>
+                <input id="detailStartTime" type="datetime-local" readonly />
+            </div>
+            <div class="row-group">
+                <label for="detailEndTime">结束时间</label>
+                <input id="detailEndTime" type="datetime-local" readonly />
+            </div>
+        </div>
+        <!-- 编辑时时间区 -->
+        <div id="detailTimeEdit" class="hidden">
+            <div class="row-group">
+                <label for="detailStartTimeEdit">开始时间</label>
+                <input id="detailStartTimeEdit" type="datetime-local" />
+            </div>
+            <div class="row-group">
+                <label for="detailEndTimeEdit">结束时间</label>
+                <input id="detailEndTimeEdit" type="datetime-local" />
+            </div>
+        </div>
         <textarea id="detailDesc" rows="3" readonly placeholder="活动描述"></textarea>
         <input id="detailPoster" type="text" readonly placeholder="发帖人" />
         <!-- 编辑时的图片URL输入 -->

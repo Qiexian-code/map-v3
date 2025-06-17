@@ -76,15 +76,22 @@ body {
     transform: translateX(-50%);
     z-index: 2100;
     background: rgba(255,255,255,0.99);
-    padding: 24px 26px 18px 26px;
+    padding: 24px 28px 18px 28px;
     border-radius: 16px;
     box-shadow: 0 6px 36px rgba(0,0,0,0.18);
-    width: 360px;
+    width: 365px;
     display: flex;
     flex-direction: column;
-    gap: 13px;
+    gap: 15px;
     max-height: 78vh;
     overflow-y: auto;
+}
+
+.row-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 0px;
 }
 
 #post-form input[type="text"], #post-form input[type="date"], #post-form input[type="datetime-local"],
@@ -96,13 +103,14 @@ body {
     border-radius: 7px;
     font-size: 15px;
     font-family: inherit;
+    margin-bottom: 0;
 }
-
 #post-form textarea, #detail-form textarea {
     resize: vertical;
     min-height: 38px;
     max-height: 120px;
 }
+
 #post-form .address-row, #detail-form .address-row {
     display: flex;
     gap: 6px;
@@ -111,7 +119,7 @@ body {
     display: flex;
     gap: 12px;
     justify-content: flex-end;
-    margin-top: 8px;
+    margin-top: 7px;
 }
 #post-form button, #detail-form button {
     padding: 8px 16px;

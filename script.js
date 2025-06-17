@@ -220,10 +220,14 @@ function refreshPostMediaPreview() {
 function showDetailForm(post) {
     document.getElementById("detailTitle").value = post.title || "";
     document.getElementById("detailAddress").value = post.address || "";
-    document.getElementById("detailStartTime").value = post.startTime || "";
-    document.getElementById("detailEndTime").value = post.endTime || "";
     document.getElementById("detailDesc").value = post.desc || "";
     document.getElementById("detailPoster").value = post.poster || "";
+    document.getElementById("detailStartTime").value = post.startTime || "";
+    document.getElementById("detailEndTime").value = post.endTime || "";
+    // 时间区切换
+    document.getElementById("detailTimeView").classList.remove("hidden");
+    document.getElementById("detailTimeEdit").classList.add("hidden");
+
     currentDetailIdx = posts.indexOf(post);
 
     // 只读时显示
@@ -250,8 +254,6 @@ function showDetailForm(post) {
     ["detailTitle","detailAddress","detailDesc","detailPoster"].forEach(id=>{
         document.getElementById(id).readOnly = true;
     });
-    document.getElementById("detailStartTime").disabled = true;
-    document.getElementById("detailEndTime").disabled = true;
     document.getElementById("detailLocateBtn").disabled = true;
     tempEditLatLng = null;
     document.getElementById("detailActions").classList.remove("hidden");
@@ -264,12 +266,16 @@ function editDetailPost() {
     ["detailTitle","detailAddress","detailDesc","detailPoster"].forEach(id=>{
         document.getElementById(id).readOnly = false;
     });
-    document.getElementById("detailStartTime").disabled = false;
-    document.getElementById("detailEndTime").disabled = false;
     document.getElementById("detailLocateBtn").disabled = false;
     tempEditLatLng = null;
     document.getElementById("detailActions").classList.add("hidden");
     document.getElementById("saveActions").classList.remove("hidden");
+    // 时间区切换
+    document.getElementById("detailTimeView").classList.add("hidden");
+    document.getElementById("detailTimeEdit").classList.remove("hidden");
+    // 赋值当前时间
+    document.getElementById("detailStartTimeEdit").value = document.getElementById("detailStartTime").value;
+    document.getElementById("detailEndTimeEdit").value = document.getElementById("detailEndTime").value;
     // 图片编辑区
     document.getElementById("detailMediaEditWrap").classList.remove("hidden");
     document.getElementById("detailMediaWrap").style.display = "none";
@@ -303,8 +309,8 @@ function saveDetailEdit() {
 
     let newTitle = document.getElementById("detailTitle").value.trim();
     let newAddress = document.getElementById("detailAddress").value.trim();
-    let newStartTime = document.getElementById("detailStartTime").value;
-    let newEndTime = document.getElementById("detailEndTime").value;
+    let newStartTime = document.getElementById("detailStartTimeEdit").value;
+    let newEndTime = document.getElementById("detailEndTimeEdit").value;
     let newDesc = document.getElementById("detailDesc").value.trim();
     let newPoster = document.getElementById("detailPoster").value.trim();
     let newMedia = document.getElementById("detailMediaInput").value.trim();
