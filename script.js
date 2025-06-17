@@ -43,7 +43,7 @@ function clearPostForm() {
         document.getElementById(id).value = "";
     });
     tempLatLng = null;
-    document.getElementById("mediaPreview").innerHTML = "";
+    document.getElementById("postMediaPreview").innerHTML = "";
 }
 
 function cancelPostForm() {
@@ -80,7 +80,7 @@ function geocodeAddress(focus) {
 // ==== 图片实时预览 ====
 function previewMediaInput() {
     const mediaInput = document.getElementById("mediaInput").value.trim();
-    const preview = document.getElementById("mediaPreview");
+    const preview = document.getElementById("postMediaPreview");
     preview.innerHTML = "";
     if (!mediaInput) return;
     // 多图片支持，分行/逗号/分号分割
