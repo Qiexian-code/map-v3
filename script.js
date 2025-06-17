@@ -1,12 +1,17 @@
+// ==== Supabase 配置 ====
+const SUPABASE_URL = 'https://ospkcvwiytlzbqbwojke.supabase.co';  // ←替换为你的Supabase项目URL
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zcGtjdndpeXRsemJxYndvamtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMzQwNzEsImV4cCI6MjA2NTcxMDA3MX0.q2DBcXsceIpRQ0qAtSxNXMPEjm0Pi2etN356GvpJGX8KEY';                  // ←替换为你的Supabase ANON KEY
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ==== 地图与基础UI ====
 let map = L.map('map').setView([37.7749, -122.4194], 13);
 let tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 tileLayer.addTo(map);
 
 let tempLatLng = null;
-let currentDetailIdx = null;
-let tempEditLatLng = null;
+let postMarkers = []; // 存所有marker，后续清除/刷新
 
-// 系统时间模块
 function updateClock() {
     const now = new Date();
     document.getElementById("clock").innerText = now.toLocaleString();
@@ -14,7 +19,6 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// 顶部浮条提示
 function notify(msg, timeout = 2000) {
     const n = document.getElementById("notify");
     n.innerText = msg;
@@ -24,7 +28,7 @@ function notify(msg, timeout = 2000) {
     }, timeout);
 }
 
-// 发帖表单开关
+// ==== 发帖表单UI ====
 function togglePostForm() {
     const form = document.getElementById("post-form");
     if (form.classList.contains("hidden")) {
@@ -34,23 +38,20 @@ function togglePostForm() {
         clearPostForm();
     }
 }
-
-// 只清空输入内容
 function clearPostForm() {
     ["titleInput", "addressInput", "startTime", "endTime", "descInput", "posterInput", "mediaInput"].forEach(id => {
         document.getElementById(id).value = "";
     });
     tempLatLng = null;
-    document.getElementById("postMediaPreview").innerHTML = "";
+    document.getElementById("mediaPreview").innerHTML = "";
 }
 
-// “取消”按钮：清空内容并收起表单
 function cancelPostForm() {
     clearPostForm();
     document.getElementById("post-form").classList.add("hidden");
 }
 
-// 地址地理编码 + 标点（只移动视角，不加marker和popup）
+// ==== 地址定位 ====
 function geocodeAddress(focus) {
     const address = document.getElementById("addressInput").value.trim();
     if (!address) {
@@ -76,46 +77,32 @@ function geocodeAddress(focus) {
         });
 }
 
-// 详情表单内定位
-function geocodeDetailAddress(focus) {
-    const address = document.getElementById("detailAddress").value.trim();
-    if (!address) {
-        notify("请输入活动地址");
-        return;
-    }
-    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.length === 0) {
-                notify("未找到该地址，请检查拼写！");
-                return;
-            }
-            const lat = parseFloat(data[0].lat);
-            const lon = parseFloat(data[0].lon);
-            tempEditLatLng = [lat, lon];
-            if (focus) {
-                map.setView([lat, lon], 16);
-            }
-        })
-        .catch(err => {
-            notify("地理编码服务异常，请稍后再试。");
-        });
+// ==== 图片实时预览 ====
+function previewMediaInput() {
+    const mediaInput = document.getElementById("mediaInput").value.trim();
+    const preview = document.getElementById("mediaPreview");
+    preview.innerHTML = "";
+    if (!mediaInput) return;
+    // 多图片支持，分行/逗号/分号分割
+    let urls = mediaInput.split(/\s*[,;\n]\s*/).filter(Boolean);
+    urls.forEach(url => {
+        if (isImageURL(url)) {
+            let img = document.createElement("img");
+            img.src = url;
+            img.style.maxWidth = "60px";
+            img.style.maxHeight = "60px";
+            img.style.borderRadius = "4px";
+            img.style.margin = "2px";
+            preview.appendChild(img);
+        }
+    });
 }
+document.getElementById("mediaInput").addEventListener("input", previewMediaInput);
 
-// 发帖内容临时存储
-let posts = [];
-
-// 判断是不是图片url
+// ==== 工具函数 ====
 function isImageURL(url) {
     return /\.(png|jpg|jpeg|gif|bmp|svg|webp)(\?.*)?$/i.test(url);
 }
-
-// 拆分出所有有效图片url
-function extractImageUrls(str) {
-    return (str||"").split(/\s+|,|;|\n/).filter(url=>isImageURL(url));
-}
-
-// 时间格式化
 function formatTime(dtstr) {
     if (!dtstr) return "";
     let d = new Date(dtstr);
@@ -126,15 +113,63 @@ function formatTime(dtstr) {
     return `${m}月${day}日 ${hour}:${min}`;
 }
 
-// 发帖提交
-function submitPost() {
+// ==== 加载活动数据 ====
+async function loadActivities() {
+    // 清除老的marker
+    postMarkers.forEach(marker => map.removeLayer(marker));
+    postMarkers = [];
+    // 拉取
+    const { data, error } = await supabase
+        .from('activities')
+        .select('*')
+        .order('start_time', { ascending: true });
+    if (error) {
+        notify("活动加载失败: " + error.message);
+        return;
+    }
+    data.forEach((post, idx) => {
+        // 多图片
+        let mediaContent = "";
+        if (post.images && post.images.length > 0 && isImageURL(post.images[0])) {
+            mediaContent = `<img src="${post.images[0]}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;">`;
+        }
+        let popup = `
+          <div class="popup-inner" data-idx="${idx}" style="cursor:pointer;">
+            <b>${post.title}</b><br>
+            <span style="color:#357">
+                开始：${formatTime(post.start_time)}<br>
+                结束：${formatTime(post.end_time)}
+            </span><br>
+            <span style="color:#888">${post.address}</span><br>
+            ${post.desc ? `<div style="margin:5px 0">${post.desc}</div>` : ""}
+            ${post.poster ? `<div style="color:#247;font-size:14px;">发帖人：${post.poster}</div>` : ""}
+            ${mediaContent}
+          </div>
+        `;
+        let marker = L.marker([post.lat, post.lng]).addTo(map).bindPopup(popup);
+        postMarkers.push(marker);
+        marker.on('popupopen', function() {
+            setTimeout(() => {
+                let popupEl = document.querySelector('.popup-inner[data-idx="'+idx+'"]');
+                if (popupEl) {
+                    popupEl.onclick = function(e) {
+                        showDetailForm(post);
+                    };
+                }
+            }, 0);
+        });
+    });
+}
+
+// ==== 发帖同步到 Supabase ====
+async function submitPost() {
     const title = document.getElementById("titleInput").value.trim();
     const address = document.getElementById("addressInput").value.trim();
     const startTime = document.getElementById("startTime").value;
     const endTime = document.getElementById("endTime").value;
     const desc = document.getElementById("descInput").value.trim();
     const poster = document.getElementById("posterInput").value.trim();
-    const media = document.getElementById("mediaInput").value.trim();
+    const mediaInput = document.getElementById("mediaInput").value.trim();
 
     if (!title || !address || !startTime || !endTime) {
         notify("请填写完整标题、地址和活动时间！");
@@ -149,255 +184,65 @@ function submitPost() {
         return;
     }
 
+    // 多图片，分割
+    let images = mediaInput
+        ? mediaInput.split(/\s*[,;\n]\s*/).filter(url => isImageURL(url))
+        : [];
+
     const post = {
-        title, address, startTime, endTime, desc, poster, media,
-        lat: tempLatLng[0], lng: tempLatLng[1],
-        postedAt: new Date().toISOString()
+        title,
+        address,
+        start_time: startTime,
+        end_time: endTime,
+        desc,
+        poster,
+        images,
+        lat: tempLatLng[0],
+        lng: tempLatLng[1],
+        created_at: new Date().toISOString()
     };
-    posts.push(post);
-
-    // popup只显示首张图片
-    let mediaUrls = extractImageUrls(media);
-    let mediaContent = "";
-    if (mediaUrls.length > 0) {
-        let url = mediaUrls[0];
-        mediaContent = `<img src="${url}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;" onerror="this.outerHTML='<pre>${url.replace(/</g,'&lt;')}</pre>'">`;
+    // 上传到supabase
+    const { error } = await supabase.from('activities').insert([post]);
+    if (error) {
+        notify("活动发布失败: " + error.message);
+        return;
     }
-
-    let idx = posts.length - 1;
-    let popup = `
-      <div class="popup-inner" data-idx="${idx}" style="cursor:pointer;">
-        <b>${post.title}</b><br>
-        <span style="color:#357">
-            开始：${formatTime(post.startTime)}<br>
-            结束：${formatTime(post.endTime)}
-        </span><br>
-        <span style="color:#888">${post.address}</span><br>
-        ${post.desc ? `<div style="margin:5px 0">${post.desc}</div>` : ""}
-        ${post.poster ? `<div style="color:#247;font-size:14px;">发帖人：${post.poster}</div>` : ""}
-        ${mediaContent}
-      </div>
-    `;
-
-    let marker = L.marker([post.lat, post.lng]).addTo(map).bindPopup(popup).openPopup();
-    post._marker = marker;
-
-    marker.on('popupopen', function() {
-        setTimeout(() => { // 等待popup渲染
-            let popupEl = document.querySelector('.popup-inner[data-idx="'+idx+'"]');
-            if (popupEl) {
-                popupEl.onclick = function(e) {
-                    showDetailForm(posts[idx]);
-                };
-            }
-        }, 0);
-    });
-
     notify("活动发布成功！", 1600);
     document.getElementById("post-form").classList.add("hidden");
     clearPostForm();
+    await loadActivities(); // 发布后刷新
 }
 
-// 发帖表单实时图片预览
-function refreshPostMediaPreview() {
-    let str = document.getElementById("mediaInput").value;
-    let urls = extractImageUrls(str);
-    let preview = document.getElementById("postMediaPreview");
-    preview.innerHTML = "";
-    urls.forEach(url=>{
-        let img = document.createElement("img");
-        img.src = url;
-        img.alt = "预览";
-        img.onclick = function(e){
-            showImgViewer(url);
-            e.stopPropagation();
-        };
-        preview.appendChild(img);
-    });
-}
-
-// 详情表单图片大图查看和编辑
+// ==== 活动详情表单 ====
 function showDetailForm(post) {
     document.getElementById("detailTitle").value = post.title || "";
     document.getElementById("detailAddress").value = post.address || "";
+    document.getElementById("detailStartTime").value = post.start_time || "";
+    document.getElementById("detailEndTime").value = post.end_time || "";
     document.getElementById("detailDesc").value = post.desc || "";
     document.getElementById("detailPoster").value = post.poster || "";
-    document.getElementById("detailStartTime").value = post.startTime || "";
-    document.getElementById("detailEndTime").value = post.endTime || "";
-    // 时间区切换
-    document.getElementById("detailTimeView").classList.remove("hidden");
-    document.getElementById("detailTimeEdit").classList.add("hidden");
-
-    currentDetailIdx = posts.indexOf(post);
-
-    // 只读时显示
-    document.getElementById("detailMediaWrap").innerHTML = "";
-    document.getElementById("detailMediaWrap").style.display = "";
-    document.getElementById("detailMediaEditWrap").classList.add("hidden");
-    let mediaUrls = extractImageUrls(post.media);
-    mediaUrls.forEach(url => {
-        let img = document.createElement("img");
-        img.src = url;
-        img.style.maxWidth = "210px";
-        img.style.maxHeight = "120px";
-        img.style.borderRadius = "7px";
-        img.style.cursor = "pointer";
-        img.alt = "活动图片";
-        img.onclick = function(e) {
-            showImgViewer(url);
-            e.stopPropagation();
-        };
-        document.getElementById("detailMediaWrap").appendChild(img);
-    });
-
-    // 输入只读
-    ["detailTitle","detailAddress","detailDesc","detailPoster"].forEach(id=>{
-        document.getElementById(id).readOnly = true;
-    });
-    document.getElementById("detailLocateBtn").disabled = true;
-    tempEditLatLng = null;
-    document.getElementById("detailActions").classList.remove("hidden");
-    document.getElementById("saveActions").classList.add("hidden");
-    document.getElementById("detail-form").classList.remove("hidden");
-}
-
-// 编辑详情表单
-function editDetailPost() {
-    ["detailTitle","detailAddress","detailDesc","detailPoster"].forEach(id=>{
-        document.getElementById(id).readOnly = false;
-    });
-    document.getElementById("detailLocateBtn").disabled = false;
-    tempEditLatLng = null;
-    document.getElementById("detailActions").classList.add("hidden");
-    document.getElementById("saveActions").classList.remove("hidden");
-    // 时间区切换
-    document.getElementById("detailTimeView").classList.add("hidden");
-    document.getElementById("detailTimeEdit").classList.remove("hidden");
-    // 赋值当前时间
-    document.getElementById("detailStartTimeEdit").value = document.getElementById("detailStartTime").value;
-    document.getElementById("detailEndTimeEdit").value = document.getElementById("detailEndTime").value;
-    // 图片编辑区
-    document.getElementById("detailMediaEditWrap").classList.remove("hidden");
-    document.getElementById("detailMediaWrap").style.display = "none";
-    let media = posts[currentDetailIdx].media || "";
-    document.getElementById("detailMediaInput").value = media;
-    refreshDetailMediaPreview();
-}
-
-// 编辑时图片预览
-function refreshDetailMediaPreview() {
-    let str = document.getElementById("detailMediaInput").value;
-    let urls = extractImageUrls(str);
-    let preview = document.getElementById("detailMediaEditPreview");
-    preview.innerHTML = "";
-    urls.forEach(url=>{
-        let img = document.createElement("img");
-        img.src = url;
-        img.alt = "预览";
-        img.onclick = function(e){
-            showImgViewer(url);
-            e.stopPropagation();
-        };
-        preview.appendChild(img);
-    });
-}
-
-function saveDetailEdit() {
-    let idx = currentDetailIdx;
-    if (idx == null) return;
-    let post = posts[idx];
-
-    let newTitle = document.getElementById("detailTitle").value.trim();
-    let newAddress = document.getElementById("detailAddress").value.trim();
-    let newStartTime = document.getElementById("detailStartTimeEdit").value;
-    let newEndTime = document.getElementById("detailEndTimeEdit").value;
-    let newDesc = document.getElementById("detailDesc").value.trim();
-    let newPoster = document.getElementById("detailPoster").value.trim();
-    let newMedia = document.getElementById("detailMediaInput").value.trim();
-
-    if (!newTitle || !newAddress || !newStartTime || !newEndTime) {
-        notify("请填写完整标题、地址和活动时间！");
-        return;
-    }
-    if (newStartTime > newEndTime) {
-        notify("开始时间不能晚于结束时间！");
-        return;
-    }
-
-    // 判断是否更改了坐标（优先用 geocodeDetailAddress 定到的 tempEditLatLng）
-    let newLat = post.lat, newLng = post.lng;
-    if (tempEditLatLng) {
-        newLat = tempEditLatLng[0];
-        newLng = tempEditLatLng[1];
-        map.removeLayer(post._marker);
-        post._marker = L.marker([newLat, newLng])
-            .addTo(map);
-        post.lat = newLat;
-        post.lng = newLng;
-    }
-
-    // 更新数据
-    post.title = newTitle;
-    post.address = newAddress;
-    post.startTime = newStartTime;
-    post.endTime = newEndTime;
-    post.desc = newDesc;
-    post.poster = newPoster;
-    post.media = newMedia;
-    post.lat = newLat;
-    post.lng = newLng;
-
-    // popup内容只显示首张图片
-    let mediaUrls = extractImageUrls(post.media);
-    let mediaContent = "";
-    if (mediaUrls.length > 0) {
-        let url = mediaUrls[0];
-        mediaContent = `<img src="${url}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;" onerror="this.outerHTML='<pre>${url.replace(/</g,'&lt;')}</pre>'">`;
-    }
-    let popup = `
-      <div class="popup-inner" data-idx="${idx}" style="cursor:pointer;">
-        <b>${post.title}</b><br>
-        <span style="color:#357">
-            开始：${formatTime(post.startTime)}<br>
-            结束：${formatTime(post.endTime)}
-        </span><br>
-        <span style="color:#888">${post.address}</span><br>
-        ${post.desc ? `<div style="margin:5px 0">${post.desc}</div>` : ""}
-        ${post.poster ? `<div style="color:#247;font-size:14px;">发帖人：${post.poster}</div>` : ""}
-        ${mediaContent}
-      </div>
-    `;
-    post._marker.bindPopup(popup).openPopup();
-    post._marker.on('popupopen', function() {
-        setTimeout(() => {
-            let popupEl = document.querySelector('.popup-inner[data-idx="'+idx+'"]');
-            if (popupEl) {
-                popupEl.onclick = function(e) {
-                    showDetailForm(posts[idx]);
+    // 图片大图展示
+    let detailMediaWrap = document.getElementById("detailMediaWrap");
+    detailMediaWrap.innerHTML = "";
+    if (post.images && post.images.length > 0) {
+        post.images.forEach(url => {
+            if (isImageURL(url)) {
+                let img = document.createElement("img");
+                img.src = url;
+                img.style.maxWidth = "210px";
+                img.style.maxHeight = "120px";
+                img.style.borderRadius = "7px";
+                img.style.cursor = "pointer";
+                img.alt = "活动图片";
+                img.onclick = function(e) {
+                    showImgViewer(url);
+                    e.stopPropagation();
                 };
+                detailMediaWrap.appendChild(img);
             }
-        }, 0);
-    });
-
-    showDetailForm(post);
-    notify("活动已修改", 1500);
-    tempEditLatLng = null;
-}
-
-function cancelDetailEdit() {
-    if (currentDetailIdx != null) {
-        showDetailForm(posts[currentDetailIdx]);
+        });
     }
-}
-
-function deleteDetailPost() {
-    if (currentDetailIdx == null) return;
-    if (!confirm("确定要删除该活动吗？")) return;
-    map.removeLayer(posts[currentDetailIdx]._marker);
-    posts.splice(currentDetailIdx, 1);
-    currentDetailIdx = null;
-    hideDetailForm();
-    notify("活动已删除", 1500);
+    document.getElementById("detail-form").classList.remove("hidden");
 }
 
 function showImgViewer(url) {
@@ -410,3 +255,10 @@ function hideImgViewer() {
 function hideDetailForm() {
     document.getElementById("detail-form").classList.add("hidden");
 }
+
+// ==== 初始化 ====
+window.onload = function() {
+    updateClock();
+    loadActivities();
+    previewMediaInput(); // 初始时预览
+};
