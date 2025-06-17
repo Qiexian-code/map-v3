@@ -32,16 +32,17 @@
         <input id="endTime" type="datetime-local" />
         <textarea id="descInput" placeholder="活动描述（可选）" rows="3"></textarea>
         <input id="posterInput" type="text" placeholder="发帖人（可留空）" />
-        <textarea id="mediaInput" placeholder="图片URL" rows="3"></textarea>
+        <textarea id="mediaInput" placeholder="图片URL（支持多条，换行或空格分隔）" rows="3" oninput="refreshPostMediaPreview()"></textarea>
         <div class="media-tutorial">
             <div style="font-size:13px; color:#888; line-height:1.5;">
-                支持网络图片直链。<br>
+                支持多张图片直链，换行或空格分隔。<br>
                 <b>图片直链获取方法：</b><br>
                 ① 右键网页图片，选择“复制图片地址”粘贴到此处。<br>
-                ② 如需上传本地图片，可用 <a href="https://imgur.com/upload" target="_blank">Imgur</a>、<a href="https://sm.ms/" target="_blank">SM.MS</a>、<a href="https://imgbb.com/" target="_blank">ImgBB</a> 等免费图床，上传后复制链接。<br>
-                <b>建议：</b> 图片需为 jpg/png/webp/svg/gif 格式，推荐先用图床获取图片URL。
+                ② 上传本地图片可用 <a href="https://imgur.com/upload" target="_blank">Imgur</a>、<a href="https://sm.ms/" target="_blank">SM.MS</a>、<a href="https://imgbb.com/" target="_blank">ImgBB</a> 等图床。<br>
+                <b>建议：</b> jpg/png/webp/svg/gif 格式，推荐用图床获取图片URL。
             </div>
         </div>
+        <div id="postMediaPreview" class="media-preview"></div>
         <div class="form-actions">
             <button onclick="submitPost()">提交</button>
             <button type="button" onclick="cancelPostForm()">取消</button>
@@ -65,6 +66,12 @@
         <input id="detailEndTime" type="datetime-local" readonly />
         <textarea id="detailDesc" rows="3" readonly placeholder="活动描述"></textarea>
         <input id="detailPoster" type="text" readonly placeholder="发帖人" />
+        <!-- 编辑时的图片URL输入 -->
+        <div id="detailMediaEditWrap" class="hidden">
+            <textarea id="detailMediaInput" rows="3" placeholder="图片URL（支持多条，换行或空格分隔）" oninput="refreshDetailMediaPreview()"></textarea>
+            <div id="detailMediaEditPreview" class="media-preview"></div>
+        </div>
+        <!-- 只读时图片预览 -->
         <div id="detailMediaWrap"></div>
         <!-- 修改/删除按钮组 -->
         <div class="form-actions" id="detailActions">
@@ -89,4 +96,3 @@
 
 </body>
 </html>
-

@@ -4,7 +4,7 @@ tileLayer.addTo(map);
 
 let tempLatLng = null;
 let currentDetailIdx = null;
-let tempEditLatLng = null; // 用于详情表单编辑时存临时定位
+let tempEditLatLng = null;
 
 // 系统时间模块
 function updateClock() {
@@ -41,6 +41,7 @@ function clearPostForm() {
         document.getElementById(id).value = "";
     });
     tempLatLng = null;
+    document.getElementById("postMediaPreview").innerHTML = "";
 }
 
 // “取消”按钮：清空内容并收起表单
@@ -104,9 +105,14 @@ function geocodeDetailAddress(focus) {
 // 发帖内容临时存储
 let posts = [];
 
-// 极简图片URL检测（判断是不是图片）
+// 判断是不是图片url
 function isImageURL(url) {
     return /\.(png|jpg|jpeg|gif|bmp|svg|webp)(\?.*)?$/i.test(url);
+}
+
+// 拆分出所有有效图片url
+function extractImageUrls(str) {
+    return (str||"").split(/\s+|,|;|\n/).filter(url=>isImageURL(url));
 }
 
 // 时间格式化
@@ -150,14 +156,12 @@ function submitPost() {
     };
     posts.push(post);
 
-    // 判断media内容如何展示
+    // popup只显示首张图片
+    let mediaUrls = extractImageUrls(media);
     let mediaContent = "";
-    if (media) {
-        if (isImageURL(media)) {
-            mediaContent = `<img src="${media}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;" onerror="this.outerHTML='<pre>${media.replace(/</g,'&lt;')}</pre>'">`;
-        } else {
-            mediaContent = `<pre>${media.replace(/</g,'&lt;')}</pre>`;
-        }
+    if (mediaUrls.length > 0) {
+        let url = mediaUrls[0];
+        mediaContent = `<img src="${url}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;" onerror="this.outerHTML='<pre>${url.replace(/</g,'&lt;')}</pre>'">`;
     }
 
     let idx = posts.length - 1;
@@ -194,7 +198,25 @@ function submitPost() {
     clearPostForm();
 }
 
-// 详情表单图片大图查看
+// 发帖表单实时图片预览
+function refreshPostMediaPreview() {
+    let str = document.getElementById("mediaInput").value;
+    let urls = extractImageUrls(str);
+    let preview = document.getElementById("postMediaPreview");
+    preview.innerHTML = "";
+    urls.forEach(url=>{
+        let img = document.createElement("img");
+        img.src = url;
+        img.alt = "预览";
+        img.onclick = function(e){
+            showImgViewer(url);
+            e.stopPropagation();
+        };
+        preview.appendChild(img);
+    });
+}
+
+// 详情表单图片大图查看和编辑
 function showDetailForm(post) {
     document.getElementById("detailTitle").value = post.title || "";
     document.getElementById("detailAddress").value = post.address || "";
@@ -204,27 +226,26 @@ function showDetailForm(post) {
     document.getElementById("detailPoster").value = post.poster || "";
     currentDetailIdx = posts.indexOf(post);
 
-    // 详细图片展示
-    let detailMediaWrap = document.getElementById("detailMediaWrap");
-    detailMediaWrap.innerHTML = "";
-    if (post.media && isImageURL(post.media)) {
+    // 只读时显示
+    document.getElementById("detailMediaWrap").innerHTML = "";
+    document.getElementById("detailMediaWrap").style.display = "";
+    document.getElementById("detailMediaEditWrap").classList.add("hidden");
+    let mediaUrls = extractImageUrls(post.media);
+    mediaUrls.forEach(url => {
         let img = document.createElement("img");
-        img.src = post.media;
+        img.src = url;
         img.style.maxWidth = "210px";
         img.style.maxHeight = "120px";
         img.style.borderRadius = "7px";
         img.style.cursor = "pointer";
         img.alt = "活动图片";
         img.onclick = function(e) {
-            showImgViewer(post.media);
+            showImgViewer(url);
             e.stopPropagation();
         };
-        detailMediaWrap.appendChild(img);
-    } else if (post.media) {
-        let pre = document.createElement("pre");
-        pre.innerText = post.media;
-        detailMediaWrap.appendChild(pre);
-    }
+        document.getElementById("detailMediaWrap").appendChild(img);
+    });
+
     // 输入只读
     ["detailTitle","detailAddress","detailDesc","detailPoster"].forEach(id=>{
         document.getElementById(id).readOnly = true;
@@ -232,22 +253,47 @@ function showDetailForm(post) {
     document.getElementById("detailStartTime").disabled = true;
     document.getElementById("detailEndTime").disabled = true;
     document.getElementById("detailLocateBtn").disabled = true;
-    tempEditLatLng = null; // 清空编辑时的临时定位
+    tempEditLatLng = null;
     document.getElementById("detailActions").classList.remove("hidden");
     document.getElementById("saveActions").classList.add("hidden");
     document.getElementById("detail-form").classList.remove("hidden");
 }
 
+// 编辑详情表单
 function editDetailPost() {
     ["detailTitle","detailAddress","detailDesc","detailPoster"].forEach(id=>{
         document.getElementById(id).readOnly = false;
     });
     document.getElementById("detailStartTime").disabled = false;
     document.getElementById("detailEndTime").disabled = false;
-    document.getElementById("detailLocateBtn").disabled = false; // 定位按钮可用
+    document.getElementById("detailLocateBtn").disabled = false;
     tempEditLatLng = null;
     document.getElementById("detailActions").classList.add("hidden");
     document.getElementById("saveActions").classList.remove("hidden");
+    // 图片编辑区
+    document.getElementById("detailMediaEditWrap").classList.remove("hidden");
+    document.getElementById("detailMediaWrap").style.display = "none";
+    let media = posts[currentDetailIdx].media || "";
+    document.getElementById("detailMediaInput").value = media;
+    refreshDetailMediaPreview();
+}
+
+// 编辑时图片预览
+function refreshDetailMediaPreview() {
+    let str = document.getElementById("detailMediaInput").value;
+    let urls = extractImageUrls(str);
+    let preview = document.getElementById("detailMediaEditPreview");
+    preview.innerHTML = "";
+    urls.forEach(url=>{
+        let img = document.createElement("img");
+        img.src = url;
+        img.alt = "预览";
+        img.onclick = function(e){
+            showImgViewer(url);
+            e.stopPropagation();
+        };
+        preview.appendChild(img);
+    });
 }
 
 function saveDetailEdit() {
@@ -261,6 +307,7 @@ function saveDetailEdit() {
     let newEndTime = document.getElementById("detailEndTime").value;
     let newDesc = document.getElementById("detailDesc").value.trim();
     let newPoster = document.getElementById("detailPoster").value.trim();
+    let newMedia = document.getElementById("detailMediaInput").value.trim();
 
     if (!newTitle || !newAddress || !newStartTime || !newEndTime) {
         notify("请填写完整标题、地址和活动时间！");
@@ -276,9 +323,11 @@ function saveDetailEdit() {
     if (tempEditLatLng) {
         newLat = tempEditLatLng[0];
         newLng = tempEditLatLng[1];
-        // 替换地图上的marker
         map.removeLayer(post._marker);
-        post._marker = L.marker([newLat, newLng]).addTo(map);
+        post._marker = L.marker([newLat, newLng])
+            .addTo(map);
+        post.lat = newLat;
+        post.lng = newLng;
     }
 
     // 更新数据
@@ -288,15 +337,16 @@ function saveDetailEdit() {
     post.endTime = newEndTime;
     post.desc = newDesc;
     post.poster = newPoster;
+    post.media = newMedia;
     post.lat = newLat;
     post.lng = newLng;
 
-    // 更新popup
+    // popup内容只显示首张图片
+    let mediaUrls = extractImageUrls(post.media);
     let mediaContent = "";
-    if (post.media && isImageURL(post.media)) {
-        mediaContent = `<img src="${post.media}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;" onerror="this.outerHTML='<pre>${post.media.replace(/</g,'&lt;')}</pre>'">`;
-    } else if (post.media) {
-        mediaContent = `<pre>${post.media.replace(/</g,'&lt;')}</pre>`;
+    if (mediaUrls.length > 0) {
+        let url = mediaUrls[0];
+        mediaContent = `<img src="${url}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;" onerror="this.outerHTML='<pre>${url.replace(/</g,'&lt;')}</pre>'">`;
     }
     let popup = `
       <div class="popup-inner" data-idx="${idx}" style="cursor:pointer;">
@@ -311,8 +361,7 @@ function saveDetailEdit() {
         ${mediaContent}
       </div>
     `;
-    post._marker.setPopupContent(popup);
-    // marker点击事件绑定
+    post._marker.bindPopup(popup).openPopup();
     post._marker.on('popupopen', function() {
         setTimeout(() => {
             let popupEl = document.querySelector('.popup-inner[data-idx="'+idx+'"]');
