@@ -48,21 +48,23 @@
         </div>
     </div>
 
-    <!-- 活动详情表单弹窗（只读，右上角小叉关闭） -->
+    <!-- 活动详情表单弹窗（可编辑/定位/删改） -->
     <div id="detail-form" class="hidden">
         <button class="close-btn" onclick="hideDetailForm()" title="关闭">&#10005;</button>
         <h3>活动详情</h3>
-        <input id="detailTitle" type="text" readonly />
         <div class="address-row">
-            <input id="detailAddress" type="text" readonly />
-            <button type="button" disabled>定位</button>
+            <input id="detailTitle" type="text" readonly style="flex:1" placeholder="活动标题" />
+        </div>
+        <div class="address-row">
+            <input id="detailAddress" type="text" readonly style="flex:1" placeholder="活动地址" />
+            <button type="button" id="detailLocateBtn" onclick="geocodeDetailAddress(true)" disabled>定位</button>
         </div>
         <label for="detailStartTime" style="font-size:15px;margin-bottom:2px;">开始时间</label>
         <input id="detailStartTime" type="datetime-local" readonly />
         <label for="detailEndTime" style="font-size:15px;margin-bottom:2px;">结束时间</label>
         <input id="detailEndTime" type="datetime-local" readonly />
-        <textarea id="detailDesc" rows="3" readonly></textarea>
-        <input id="detailPoster" type="text" readonly />
+        <textarea id="detailDesc" rows="3" readonly placeholder="活动描述"></textarea>
+        <input id="detailPoster" type="text" readonly placeholder="发帖人" />
         <div id="detailMediaWrap"></div>
         <!-- 修改/删除按钮组 -->
         <div class="form-actions" id="detailActions">
@@ -87,3 +89,4 @@
 
 </body>
 </html>
+

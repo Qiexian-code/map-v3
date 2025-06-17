@@ -4,6 +4,7 @@ tileLayer.addTo(map);
 
 let tempLatLng = null;
 let currentDetailIdx = null;
+let tempEditLatLng = null; // 用于详情表单编辑时存临时定位
 
 // 系统时间模块
 function updateClock() {
@@ -65,6 +66,32 @@ function geocodeAddress(focus) {
             const lat = parseFloat(data[0].lat);
             const lon = parseFloat(data[0].lon);
             tempLatLng = [lat, lon];
+            if (focus) {
+                map.setView([lat, lon], 16);
+            }
+        })
+        .catch(err => {
+            notify("地理编码服务异常，请稍后再试。");
+        });
+}
+
+// 详情表单内定位
+function geocodeDetailAddress(focus) {
+    const address = document.getElementById("detailAddress").value.trim();
+    if (!address) {
+        notify("请输入活动地址");
+        return;
+    }
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length === 0) {
+                notify("未找到该地址，请检查拼写！");
+                return;
+            }
+            const lat = parseFloat(data[0].lat);
+            const lon = parseFloat(data[0].lon);
+            tempEditLatLng = [lat, lon];
             if (focus) {
                 map.setView([lat, lon], 16);
             }
@@ -204,7 +231,8 @@ function showDetailForm(post) {
     });
     document.getElementById("detailStartTime").disabled = true;
     document.getElementById("detailEndTime").disabled = true;
-    // 按钮组切换
+    document.getElementById("detailLocateBtn").disabled = true;
+    tempEditLatLng = null; // 清空编辑时的临时定位
     document.getElementById("detailActions").classList.remove("hidden");
     document.getElementById("saveActions").classList.add("hidden");
     document.getElementById("detail-form").classList.remove("hidden");
@@ -216,6 +244,8 @@ function editDetailPost() {
     });
     document.getElementById("detailStartTime").disabled = false;
     document.getElementById("detailEndTime").disabled = false;
+    document.getElementById("detailLocateBtn").disabled = false; // 定位按钮可用
+    tempEditLatLng = null;
     document.getElementById("detailActions").classList.add("hidden");
     document.getElementById("saveActions").classList.remove("hidden");
 }
@@ -224,23 +254,52 @@ function saveDetailEdit() {
     let idx = currentDetailIdx;
     if (idx == null) return;
     let post = posts[idx];
-    post.title = document.getElementById("detailTitle").value.trim();
-    post.address = document.getElementById("detailAddress").value.trim();
-    post.startTime = document.getElementById("detailStartTime").value;
-    post.endTime = document.getElementById("detailEndTime").value;
-    post.desc = document.getElementById("detailDesc").value.trim();
-    post.poster = document.getElementById("detailPoster").value.trim();
 
-    // 重新生成popup内容
+    let newTitle = document.getElementById("detailTitle").value.trim();
+    let newAddress = document.getElementById("detailAddress").value.trim();
+    let newStartTime = document.getElementById("detailStartTime").value;
+    let newEndTime = document.getElementById("detailEndTime").value;
+    let newDesc = document.getElementById("detailDesc").value.trim();
+    let newPoster = document.getElementById("detailPoster").value.trim();
+
+    if (!newTitle || !newAddress || !newStartTime || !newEndTime) {
+        notify("请填写完整标题、地址和活动时间！");
+        return;
+    }
+    if (newStartTime > newEndTime) {
+        notify("开始时间不能晚于结束时间！");
+        return;
+    }
+
+    // 判断是否更改了坐标（优先用 geocodeDetailAddress 定到的 tempEditLatLng）
+    let newLat = post.lat, newLng = post.lng;
+    if (tempEditLatLng) {
+        newLat = tempEditLatLng[0];
+        newLng = tempEditLatLng[1];
+        // 替换地图上的marker
+        map.removeLayer(post._marker);
+        post._marker = L.marker([newLat, newLng]).addTo(map);
+    }
+
+    // 更新数据
+    post.title = newTitle;
+    post.address = newAddress;
+    post.startTime = newStartTime;
+    post.endTime = newEndTime;
+    post.desc = newDesc;
+    post.poster = newPoster;
+    post.lat = newLat;
+    post.lng = newLng;
+
+    // 更新popup
     let mediaContent = "";
     if (post.media && isImageURL(post.media)) {
         mediaContent = `<img src="${post.media}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;" onerror="this.outerHTML='<pre>${post.media.replace(/</g,'&lt;')}</pre>'">`;
     } else if (post.media) {
         mediaContent = `<pre>${post.media.replace(/</g,'&lt;')}</pre>`;
     }
-    let idxStr = idx;
     let popup = `
-      <div class="popup-inner" data-idx="${idxStr}" style="cursor:pointer;">
+      <div class="popup-inner" data-idx="${idx}" style="cursor:pointer;">
         <b>${post.title}</b><br>
         <span style="color:#357">
             开始：${formatTime(post.startTime)}<br>
@@ -253,9 +312,21 @@ function saveDetailEdit() {
       </div>
     `;
     post._marker.setPopupContent(popup);
-    // 恢复只读和按钮状态
+    // marker点击事件绑定
+    post._marker.on('popupopen', function() {
+        setTimeout(() => {
+            let popupEl = document.querySelector('.popup-inner[data-idx="'+idx+'"]');
+            if (popupEl) {
+                popupEl.onclick = function(e) {
+                    showDetailForm(posts[idx]);
+                };
+            }
+        }, 0);
+    });
+
     showDetailForm(post);
     notify("活动已修改", 1500);
+    tempEditLatLng = null;
 }
 
 function cancelDetailEdit() {
@@ -267,12 +338,9 @@ function cancelDetailEdit() {
 function deleteDetailPost() {
     if (currentDetailIdx == null) return;
     if (!confirm("确定要删除该活动吗？")) return;
-    // 移除地图marker
     map.removeLayer(posts[currentDetailIdx]._marker);
-    // 删除数组项
     posts.splice(currentDetailIdx, 1);
     currentDetailIdx = null;
-    // 关闭表单
     hideDetailForm();
     notify("活动已删除", 1500);
 }
