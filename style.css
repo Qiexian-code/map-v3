@@ -137,7 +137,6 @@ body {
     color: #2060d8;
     text-decoration: underline;
 }
-
 .hidden { display: none; }
 #post-form.hidden, #detail-form.hidden { display: none !important; }
 
@@ -197,4 +196,3 @@ body {
     transition: color 0.2s;
 }
 #img-viewer .close-btn:hover { color: #ff4040; }
-
