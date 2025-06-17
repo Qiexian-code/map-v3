@@ -71,96 +71,96 @@ body {
 
 #post-form, #detail-form {
     position: absolute;
-    top: 90px;
+    top: 120px;               /* 原来90px，现在往下移 */
     left: 50%;
     transform: translateX(-50%);
     z-index: 2100;
     background: rgba(255,255,255,0.99);
-    padding: 24px 28px 18px 28px;
+    padding: 36px 32px 24px 32px;   /* 上面padding增大 */
     border-radius: 16px;
     box-shadow: 0 6px 36px rgba(0,0,0,0.18);
-    width: 365px;
+    width: 380px;           /* 略宽一点，更舒服 */
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    max-height: 78vh;
+    gap: 22px;              /* 行间距拉大了 */
+    max-height: 76vh;
     overflow-y: auto;
 }
 
-.row-group {
+#post-form h3, #detail-form h3 {
+    margin-top: 0;
+    margin-bottom: 16px;    /* 标题和表单区间距更大 */
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.row-group, .address-row {
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    margin-bottom: 0px;
+    gap: 5px;
+    margin-bottom: 0;
+}
+
+.form-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+
+#post-form input, #detail-form input,
+#post-form textarea, #detail-form textarea {
+    margin-bottom: 0;
+    margin-top: 0;
 }
 
 #post-form input[type="text"], #post-form input[type="date"], #post-form input[type="datetime-local"],
 #post-form textarea,
 #detail-form input[type="text"], #detail-form input[type="date"], #detail-form input[type="datetime-local"],
 #detail-form textarea {
-    padding: 7px 11px;
-    border: 1px solid #bbb;
-    border-radius: 7px;
-    font-size: 15px;
+    padding: 10px 12px;
+    border: 1.2px solid #bbb;
+    border-radius: 8px;
+    font-size: 16px;
     font-family: inherit;
+    background: #fcfcfc;
     margin-bottom: 0;
 }
-#post-form textarea, #detail-form textarea {
-    resize: vertical;
-    min-height: 38px;
-    max-height: 120px;
-}
 
-#post-form .address-row, #detail-form .address-row {
-    display: flex;
-    gap: 6px;
+#post-form textarea, #detail-form textarea {
+    min-height: 42px;
+    max-height: 140px;
+    resize: vertical;
 }
-.form-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-    margin-top: 7px;
-}
-#post-form button, #detail-form button {
-    padding: 8px 16px;
-    font-size: 15px;
-    border-radius: 7px;
-    background: #2b7cff;
-    color: #fff;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-}
-#post-form button:hover, #detail-form button:hover { background: #1250a3; }
 
 .media-tutorial {
-    margin-top: -8px;
-    margin-bottom: 4px;
+    margin-top: -4px;
+    margin-bottom: 8px;
     padding-left: 2px;
     color: #888;
     font-size: 13px;
     line-height: 1.5;
     word-break: break-all;
 }
-.media-tutorial a {
-    color: #2060d8;
-    text-decoration: underline;
-}
+
 .media-preview {
-    margin: 6px 0 0 0;
+    margin: 8px 0 0 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
     min-height: 32px;
 }
+
 .media-preview img {
-    max-width: 72px;
-    max-height: 52px;
+    max-width: 78px;
+    max-height: 58px;
     border-radius: 6px;
-    box-shadow: 0 1px 4px #0002;
+    box-shadow: 0 1px 6px #0002;
     cursor: pointer;
     object-fit: cover;
 }
+
 
 .hidden { display: none; }
 #post-form.hidden, #detail-form.hidden { display: none !important; }
