@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
+
     <div id="clock"></div>
     <div id="notify" class="hidden"></div>
 
@@ -36,7 +37,7 @@
         </div>
         <textarea id="descInput" placeholder="活动描述（可选）" rows="3"></textarea>
         <input id="posterInput" type="text" placeholder="发帖人（可留空）" />
-        <textarea id="mediaInput" placeholder="图片URL（支持多条，换行或空格分隔）" rows="3" oninput="refreshPostpostMediaPreview()"></textarea>
+        <textarea id="mediaInput" placeholder="图片URL（支持多条，换行或空格分隔）" rows="3" oninput="refreshPostMediaPreview()"></textarea>
         <div class="media-tutorial">
             <div style="font-size:13px; color:#888; line-height:1.5;">
                 支持多张图片直链，换行或空格分隔。<br>
@@ -46,7 +47,7 @@
                 <b>建议：</b> jpg/png/webp/svg/gif 格式，推荐用图床获取图片URL。
             </div>
         </div>
-        <div id="postpostMediaPreview" class="media-preview"></div>
+        <div id="postMediaPreview" class="media-preview"></div>
         <div class="form-actions">
             <button onclick="submitPost()">提交</button>
             <button type="button" onclick="cancelPostForm()">取消</button>
@@ -62,7 +63,6 @@
             <input id="detailAddress" type="text" readonly placeholder="活动地址" />
             <button type="button" id="detailLocateBtn" onclick="geocodeDetailAddress(true)" disabled>定位</button>
         </div>
-        <!-- 只读时间区 -->
         <div id="detailTimeView">
             <div class="row-group">
                 <label for="detailStartTime">开始时间</label>
@@ -73,7 +73,6 @@
                 <input id="detailEndTime" type="datetime-local" readonly />
             </div>
         </div>
-        <!-- 编辑时时间区 -->
         <div id="detailTimeEdit" class="hidden">
             <div class="row-group">
                 <label for="detailStartTimeEdit">开始时间</label>
@@ -86,19 +85,15 @@
         </div>
         <textarea id="detailDesc" rows="3" readonly placeholder="活动描述"></textarea>
         <input id="detailPoster" type="text" readonly placeholder="发帖人" />
-        <!-- 编辑时的图片URL输入 -->
         <div id="detailMediaEditWrap" class="hidden">
-            <textarea id="detailMediaInput" rows="3" placeholder="图片URL（支持多条，换行或空格分隔）" oninput="refreshDetailpostMediaPreview()"></textarea>
+            <textarea id="detailMediaInput" rows="3" placeholder="图片URL（支持多条，换行或空格分隔）" oninput="refreshDetailMediaPreview()"></textarea>
             <div id="detailMediaEditPreview" class="media-preview"></div>
         </div>
-        <!-- 只读时图片预览 -->
         <div id="detailMediaWrap"></div>
-        <!-- 修改/删除按钮组 -->
         <div class="form-actions" id="detailActions">
             <button id="editBtn" onclick="editDetailPost()">修改</button>
             <button id="deleteBtn" onclick="deleteDetailPost()">删除</button>
         </div>
-        <!-- 保存/取消按钮组 -->
         <div class="form-actions hidden" id="saveActions">
             <button onclick="saveDetailEdit()">保存</button>
             <button onclick="cancelDetailEdit()">取消</button>

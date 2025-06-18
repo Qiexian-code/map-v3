@@ -6,7 +6,6 @@ body {
     height: 100vh;
     width: 100vw;
 }
-
 #clock {
     position: absolute;
     top: 20px;
@@ -14,7 +13,7 @@ body {
     transform: translateX(-50%);
     z-index: 2000;
     background: rgba(0, 0, 0, 0.75);
-    color: #ffffff;
+    color: #fff;
     padding: 12px 30px;
     border-radius: 12px;
     font-size: 20px;
@@ -24,7 +23,6 @@ body {
     min-width: 230px;
     text-align: center;
 }
-
 #notify {
     position: absolute;
     top: 0;
@@ -45,10 +43,9 @@ body {
     transition: opacity 0.4s;
 }
 #notify.hidden { opacity: 0; pointer-events: none; }
-
 #post-menu {
     position: absolute;
-    top: 60px;
+    top: 120px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 2000;
@@ -68,156 +65,109 @@ body {
     box-shadow: 0 2px 8px #bbb;
 }
 #post-btn:hover { background: #1250a3; }
-
 #post-form, #detail-form {
     position: absolute;
-    top: 120px;               /* 原来90px，现在往下移 */
+    top: 180px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 2100;
     background: rgba(255,255,255,0.99);
-    padding: 36px 32px 24px 32px;   /* 上面padding增大 */
+    padding: 24px 26px 18px 26px;
     border-radius: 16px;
     box-shadow: 0 6px 36px rgba(0,0,0,0.18);
-    width: 380px;           /* 略宽一点，更舒服 */
+    width: 410px;
     display: flex;
     flex-direction: column;
-    gap: 22px;              /* 行间距拉大了 */
-    max-height: 76vh;
+    gap: 13px;
+    max-height: 75vh;
     overflow-y: auto;
 }
-
-#post-form h3, #detail-form h3 {
-    margin-top: 0;
-    margin-bottom: 16px;    /* 标题和表单区间距更大 */
-    font-size: 22px;
-    font-weight: bold;
-    letter-spacing: 1px;
+#post-form input[type="text"], #post-form input[type="datetime-local"], #post-form textarea,
+#detail-form input[type="text"], #detail-form input[type="datetime-local"], #detail-form textarea {
+    padding: 7px 11px;
+    border: 1px solid #bbb;
+    border-radius: 7px;
+    font-size: 15px;
+    font-family: inherit;
 }
-
-.row-group, .address-row {
+#post-form textarea, #detail-form textarea {
+    resize: vertical;
+    min-height: 38px;
+    max-height: 120px;
+}
+.address-row {
     display: flex;
-    flex-direction: column;
-    gap: 5px;
-    margin-bottom: 0;
+    gap: 6px;
 }
-
+.row-group {
+    margin-bottom: 6px;
+}
 .form-actions {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     justify-content: flex-end;
-    margin-top: 12px;
+    margin-top: 8px;
 }
-
-#post-form input, #detail-form input,
-#post-form textarea, #detail-form textarea {
-    margin-bottom: 0;
-    margin-top: 0;
-}
-
-#post-form input[type="text"], #post-form input[type="date"], #post-form input[type="datetime-local"],
-#post-form textarea,
-#detail-form input[type="text"], #detail-form input[type="date"], #detail-form input[type="datetime-local"],
-#detail-form textarea {
-    padding: 10px 12px;
-    border: 1.2px solid #bbb;
-    border-radius: 8px;
-    font-size: 16px;
-    font-family: inherit;
-    background: #fcfcfc;
-    margin-bottom: 0;
-}
-
-#post-form textarea, #detail-form textarea {
-    min-height: 42px;
-    max-height: 140px;
-    resize: vertical;
-}
-
-.media-tutorial {
-    margin-top: -4px;
-    margin-bottom: 8px;
-    padding-left: 2px;
-    color: #888;
-    font-size: 13px;
-    line-height: 1.5;
-    word-break: break-all;
-}
-
-.media-preview {
-    margin: 8px 0 0 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    min-height: 32px;
-}
-
-.media-preview img {
-    max-width: 78px;
-    max-height: 58px;
-    border-radius: 6px;
-    box-shadow: 0 1px 6px #0002;
+.form-actions button {
+    padding: 8px 16px;
+    font-size: 15px;
+    border-radius: 7px;
+    background: #2b7cff;
+    color: #fff;
+    border: none;
+    font-weight: 600;
     cursor: pointer;
-    object-fit: cover;
 }
-
-
-.hidden { display: none; }
-#post-form.hidden, #detail-form.hidden { display: none !important; }
-
+.form-actions button:hover { background: #1250a3; }
+.hidden { display: none !important; }
+.media-preview img {
+    max-width: 110px;
+    max-height: 64px;
+    margin: 4px 6px 4px 0;
+    border-radius: 7px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+}
 .leaflet-popup-content img {
     max-width: 210px !important;
     border-radius: 6px;
     margin-top: 4px;
 }
-
-/* 详情表单右上角关闭按钮（小叉） */
-#detail-form .close-btn {
-    position: absolute;
-    top: 12px;
-    right: 16px;
-    background: transparent;
-    border: none;
-    font-size: 22px;
-    color: #888;
-    cursor: pointer;
-    padding: 0;
-    z-index: 2;
-    transition: color 0.18s;
-}
-#detail-form .close-btn:hover {
-    color: #d82323;
-}
-
-/* 详细大图预览蒙层 */
 #img-viewer {
     position: fixed;
-    z-index: 3000;
-    top:0;left:0;width:100vw;height:100vh;
-    background: rgba(0,0,0,0.86);
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 3500;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.22s;
 }
-#img-viewer.hidden { display: none !important; }
 #img-viewer img {
     max-width: 92vw;
-    max-height: 90vh;
-    border-radius: 14px;
-    box-shadow: 0 8px 36px #000a;
-    background: #fff;
+    max-height: 82vh;
+    box-shadow: 0 8px 36px #0009;
+    border-radius: 11px;
 }
 #img-viewer .close-btn {
-    position: absolute;
-    top: 26px;
-    right: 44px;
-    background: transparent;
+    position: fixed;
+    top: 22px;
+    right: 52px;
+    background: #fff;
     border: none;
-    font-size: 34px;
-    color: #fff;
+    color: #333;
+    font-size: 26px;
+    border-radius: 100px;
     cursor: pointer;
-    z-index: 10;
-    transition: color 0.2s;
+    padding: 2px 14px 2px 12px;
+    z-index: 3501;
 }
-#img-viewer .close-btn:hover { color: #ff4040; }
+.close-btn {
+    position: absolute;
+    top: 18px; right: 16px;
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 22px;
+    cursor: pointer;
+    z-index: 2102;
+}
