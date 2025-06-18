@@ -1,6 +1,6 @@
 // ----------- Supabase 连接配置 ------------
-const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co'; // 替换
-const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';                  // 替换
+const SUPABASE_URL = 'https://ospkcvwiytlzbqbwojke.supabase.co://YOUR_PROJECT_ID.supabase.co'; // 替换
+const SUPABASE_ANON_KEY = 'YOUR_AeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zcGtjdndpeXRsemJxYndvamtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMzQwNzEsImV4cCI6MjA2NTcxMDA3MX0.q2DBcXsceIpRQ0qAtSxNXMPEjm0Pi2etN356GvpJGX8NON_KEY';                  // 替换
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ----------- 地图初始化 ------------
