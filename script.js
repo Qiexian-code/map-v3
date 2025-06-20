@@ -97,6 +97,28 @@ function refreshPostMediaPreview() {
         }
     });
 }
+document.getElementById("uploadImageInput").addEventListener('change', async function(e) {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    const statusDiv = document.getElementById("uploadStatus");
+    statusDiv.innerText = "正在上传图片...";
+    let uploadedURLs = [];
+    for (let file of files) {
+        const ext = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.floor(Math.random()*1e6)}.${ext}`;
+        const { error } = await supabase.storage.from('activity-images').upload(fileName, file, { upsert: false });
+        if (error) { statusDiv.innerText = "上传失败: " + error.message; return; }
+        const { data: { publicUrl } } = supabase.storage.from('activity-images').getPublicUrl(fileName);
+        uploadedURLs.push(publicUrl);
+    }
+    let mediaInput = document.getElementById("mediaInput");
+    if (mediaInput.value) mediaInput.value += "\n";
+    mediaInput.value += uploadedURLs.join("\n");
+    refreshPostMediaPreview();
+    statusDiv.innerText = "图片上传完成！";
+    this.value = "";
+    setTimeout(()=>{ statusDiv.innerText = ""; }, 1000);
+});
 
 // ----------- 提交新活动 ------------
 async function submitPost() {
