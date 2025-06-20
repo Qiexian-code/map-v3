@@ -8,7 +8,6 @@ let map = L.map('map').setView([37.7749, -122.4194], 13);
 let tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 tileLayer.addTo(map);
 
-// ----------- 全局状态 ------------
 let posts = [];
 let postGroups = {};
 let markers = {};
@@ -145,7 +144,7 @@ async function loadPosts() {
     });
 }
 
-// ----------- Popup 轮播展示 ------------
+// ----------- Popup 轮播展示（已修复多次点击失效） ------------
 function showGroupPopup(marker, groupArr, idx) {
     const post = groupArr[idx];
     let images = post.images || [];
@@ -173,8 +172,14 @@ function showGroupPopup(marker, groupArr, idx) {
         ${nav}
       </div>
     `;
-    marker.bindPopup(popupHtml).openPopup();
-    marker._groupArr = groupArr; // 存储用于切换
+
+    // 关键：每次切换卡片或marker前强制关闭并解绑popup，再绑定新内容，setTimeout打开
+    marker.closePopup();
+    marker.unbindPopup();
+    marker.bindPopup(popupHtml);
+    setTimeout(() => { marker.openPopup(); }, 0);
+
+    marker._groupArr = groupArr;
 }
 
 // 轮播切换按钮
@@ -277,9 +282,6 @@ window.showNextDetail = function() {
 
 // ----------- 详情关闭 ------------
 function hideDetailForm() { document.getElementById("detail-form").classList.add("hidden"); editingPostId = null; }
-
-// ----------- 其它编辑/保存/删除逻辑按你原本的即可 -----------
-// 这里省略，如有需要我可补充（比如编辑、保存、删除、图片大图预览等）
 
 // ----------- 图片大图查看 ------------
 function showImgViewer(url) {
