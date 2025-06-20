@@ -98,7 +98,7 @@ function refreshPostMediaPreview() {
     });
 }
 
-ddocument.getElementById("uploadImageInput").addEventListener('change', async function(e) {
+document.getElementById("uploadImageInput").addEventListener('change', async function(e) {
     const files = Array.from(e.target.files);
     if (!files.length) return;
     const statusDiv = document.getElementById("uploadStatus");
