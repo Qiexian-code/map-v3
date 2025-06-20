@@ -171,3 +171,35 @@ body {
     cursor: pointer;
     z-index: 2102;
 }
+/* 新增或补充在 style.css */
+
+.popup-arrow {
+    background: #2b7cff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 17px;
+    padding: 2px 13px;
+    cursor: pointer;
+    margin: 0 3px;
+    transition: background .18s;
+}
+.popup-arrow:hover {
+    background: #1250a3;
+}
+
+.popup-detail-btn {
+    padding: 4px 13px;
+    font-size: 15px;
+    border-radius: 7px;
+    background: #eee;
+    color: #155;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 2px;
+    transition: background .18s;
+}
+.popup-detail-btn:hover {
+    background: #d7e2fa;
+}
