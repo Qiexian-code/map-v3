@@ -190,3 +190,8 @@ window.showNextDetail = function() {
     let newIdx = (currentDetailIdx + 1) % currentDetailGroup.length;
     showDetailForm(currentDetailGroup[newIdx], currentDetailGroup, newIdx);
 };
+function togglePostForm() {
+    const form = document.getElementById("post-form");
+    if (form.classList.contains("hidden")) form.classList.remove("hidden");
+    else { form.classList.add("hidden"); clearPostForm(); }
+}
