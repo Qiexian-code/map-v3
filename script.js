@@ -101,23 +101,47 @@ document.getElementById("uploadImageInput").addEventListener('change', async fun
     const files = Array.from(e.target.files);
     if (!files.length) return;
     const statusDiv = document.getElementById("uploadStatus");
+    const previewDiv = document.getElementById("uploadPreview");
     statusDiv.innerText = "正在上传图片...";
+    previewDiv.innerHTML = "";
     let uploadedURLs = [];
     for (let file of files) {
         const ext = file.name.split('.').pop();
         const fileName = `${Date.now()}-${Math.floor(Math.random()*1e6)}.${ext}`;
-        const { error } = await supabase.storage.from('activity-images').upload(fileName, file, { upsert: false });
-        if (error) { statusDiv.innerText = "上传失败: " + error.message; return; }
-        const { data: { publicUrl } } = supabase.storage.from('activity-images').getPublicUrl(fileName);
-        uploadedURLs.push(publicUrl);
+        // 上传到 storage
+        const { error } = await supabase.storage
+            .from('activity-images')   // 你的bucket名
+            .upload(fileName, file, { upsert: false });
+        if (error) {
+            statusDiv.innerText = "上传失败: " + error.message;
+            return;
+        }
+        // 获取直链
+        const { data } = supabase.storage.from('activity-images').getPublicUrl(fileName);
+        const url = data.publicUrl;
+        uploadedURLs.push(url);
+
+        // 立即在本地预览
+        let img = document.createElement("img");
+        img.src = url;
+        img.alt = "上传图片预览";
+        img.style.maxWidth = "110px";
+        img.style.maxHeight = "64px";
+        img.style.margin = "4px 6px 4px 0";
+        img.style.borderRadius = "7px";
+        img.onclick = ()=>showImgViewer(url);
+        previewDiv.appendChild(img);
     }
+    // 自动加到“图片URL”输入区
     let mediaInput = document.getElementById("mediaInput");
     if (mediaInput.value) mediaInput.value += "\n";
     mediaInput.value += uploadedURLs.join("\n");
+    // 刷新图片预览
     refreshPostMediaPreview();
     statusDiv.innerText = "图片上传完成！";
+    // 重置文件框
     this.value = "";
-    setTimeout(()=>{ statusDiv.innerText = ""; }, 1000);
+    setTimeout(()=>{ statusDiv.innerText = ""; }, 1200);
 });
 
 // ----------- 提交新活动 ------------
