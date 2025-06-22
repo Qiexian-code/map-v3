@@ -72,15 +72,21 @@ body {
     transform: translateX(-50%);
     z-index: 2100;
     background: rgba(255,255,255,0.99);
-    padding: 24px 26px 18px 26px;
     border-radius: 16px;
     box-shadow: 0 6px 36px rgba(0,0,0,0.18);
     width: 410px;
     display: flex;
     flex-direction: column;
+    /* 删除 gap、padding、overflow-y 这3项，交给内层控制 */
+}
+.form-scroll {
+    padding: 24px 26px 18px 26px;
+    display: flex;
+    flex-direction: column;
     gap: 13px;
     max-height: 75vh;
     overflow-y: auto;
+    border-radius: 16px; /* 可选，兼容内部阴影等 */
 }
 #post-form input[type="text"], #post-form input[type="datetime-local"], #post-form textarea,
 #detail-form input[type="text"], #detail-form input[type="datetime-local"], #detail-form textarea {

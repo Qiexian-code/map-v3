@@ -26,43 +26,47 @@
     </div>
 
     <!-- 发帖表单弹窗 -->
-    <div id="post-form" class="hidden">
-        <h3>发起新活动</h3>
-        <input id="titleInput" type="text" placeholder="活动标题（必填）" />
-        <div class="address-row">
-            <input id="addressInput" type="text" placeholder="活动地址（必填，如 1 Market St, SF）" />
-            <button type="button" onclick="geocodeAddress(true)">定位</button>
-        </div>
-        <div class="row-group">
-            <label for="startTime">开始时间</label>
-            <input id="startTime" type="datetime-local" />
-        </div>
-        <div class="row-group">
-            <label for="endTime">结束时间</label>
-            <input id="endTime" type="datetime-local" />
-        </div>
-        <textarea id="descInput" placeholder="活动描述（可选）" rows="3"></textarea>
-        <input id="posterInput" type="text" placeholder="发帖人（可留空）" />
-        <input type="file" id="uploadImageInput" accept="image/*" multiple>
-        <div id="uploadStatus"></div>
-        <div id="uploadPreview" class="media-preview"></div>
-
-        <textarea id="mediaInput" placeholder="图片URL（支持多条，换行或空格分隔）" rows="3" oninput="refreshPostMediaPreview()"></textarea>
-        <div class="media-tutorial">
-            <div style="font-size:13px; color:#888; line-height:1.5;">
-                支持多张图片直链，换行或空格分隔。<br>
-                <b>图片直链获取方法：</b><br>
-                ① 右键网页图片，选择“复制图片地址”粘贴到此处。<br>
-                ② 上传本地图片可用 <a href="https://imgur.com/upload" target="_blank">Imgur</a>、<a href="https://sm.ms/" target="_blank">SM.MS</a>、<a href="https://imgbb.com/" target="_blank">ImgBB</a> 等图床。<br>
-                <b>建议：</b> jpg/png/webp/svg/gif 格式，推荐用图床获取图片URL。
-            </div>
-        </div>
-        <div id="postMediaPreview" class="media-preview"></div>
-        <div class="form-actions">
-            <button onclick="submitPost()">提交</button>
-            <button type="button" onclick="cancelPostForm()">取消</button>
-        </div>
+<div id="post-form" class="hidden">
+  <div class="form-scroll">
+    <h3>发起新活动</h3>
+    <input id="titleInput" type="text" placeholder="活动标题（必填）" />
+    <div class="address-row">
+      <input id="addressInput" type="text" placeholder="活动地址（必填，如 1 Market St, SF）" />
+      <button type="button" onclick="geocodeAddress(true)">定位</button>
     </div>
+    <div class="row-group">
+      <label for="startTime">开始时间</label>
+      <input id="startTime" type="datetime-local" />
+    </div>
+    <div class="row-group">
+      <label for="endTime">结束时间</label>
+      <input id="endTime" type="datetime-local" />
+    </div>
+    <textarea id="descInput" placeholder="活动描述（可选）" rows="3"></textarea>
+    <input id="posterInput" type="text" placeholder="发帖人（可留空）" />
+    <input type="file" id="uploadImageInput" accept="image/*" multiple>
+    <div id="uploadStatus"></div>
+    <div id="uploadPreview" class="media-preview"></div>
+    <textarea id="mediaInput" placeholder="图片URL（支持多条，换行或空格分隔）" rows="3" oninput="refreshPostMediaPreview()"></textarea>
+    <div class="media-tutorial">
+      <div style="font-size:13px; color:#888; line-height:1.5;">
+        支持多张图片直链，换行或空格分隔。<br>
+        <b>图片直链获取方法：</b><br>
+        ① 右键网页图片，选择“复制图片地址”粘贴到此处。<br>
+        ② 上传本地图片可用
+        <a href="https://imgur.com/upload" target="_blank">Imgur</a>、
+        <a href="https://sm.ms/" target="_blank">SM.MS</a>、
+        <a href="https://imgbb.com/" target="_blank">ImgBB</a> 等图床。<br>
+        <b>建议：</b> jpg/png/webp/svg/gif 格式，推荐用图床获取图片URL。
+      </div>
+    </div>
+    <div id="postMediaPreview" class="media-preview"></div>
+    <div class="form-actions">
+      <button onclick="submitPost()">提交</button>
+      <button type="button" onclick="cancelPostForm()">取消</button>
+    </div>
+  </div>
+</div>
 
     <!-- 活动详情表单弹窗（可编辑/定位/删改） -->
     <div id="detail-form" class="hidden">
