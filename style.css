@@ -229,180 +229,47 @@ body {
   display: block;
 }
 @media (max-width: 700px) {
-  html, body {
-    font-size: 15px;
-    margin: 0;
-    padding: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow-x: hidden;
-    background: #f8fafd;
-  }
-  #map {
-    height: 100vh !important;
-    width: 100vw !important;
-    min-height: 100vh;
-  }
-  #logo {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    height: 36px;
-    width: 36px;
-    border-radius: 11px;
-    background: rgba(255,255,255,0.93);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border: 1px solid #e5e8ec;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2200;
-  }
-  #logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 11px;
-  }
-
-  .leaflet-top.leaflet-left {
-    margin-top: 56px !important;
-    margin-left: 6px !important;
-  }
-
-  #clock {
-    position: absolute;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2000;
-    background: rgba(0,0,0,0.78);
-    color: #fff;
-    padding: 7px 15px;
-    border-radius: 9px;
-    font-size: 14px;
-    font-weight: 600;
-    box-shadow: 0 2px 9px rgba(0,0,0,0.11);
-    letter-spacing: 0.8px;
-    min-width: 90px;
-    max-width: 65vw;
-    text-align: center;
-  }
-  #notify {
-    top: 0;
-    font-size: 13px;
-    min-width: 72px;
-    max-width: 82vw;
-    padding: 8px 6vw;
-    border-radius: 0 0 9px 9px;
-  }
-  #post-menu {
-    top: 62px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2000;
-    flex-direction: row;
-    width: 90vw;
-    justify-content: center;
-    align-items: center;
-  }
-  #post-btn {
-    font-size: 15px;
-    padding: 9px 11vw;
-    border-radius: 7px;
-    margin: 0;
-    min-width: 0;
-    width: auto;
-    box-shadow: 0 1px 5px #aaa8;
-    background: #2b7cff;
-  }
-  #post-btn:active { background: #1250a3; }
-
-  /* -------- 关键：弹窗表单左右呼吸感 -------- */
   #post-form, #detail-form {
     position: fixed !important;
-    top: 78px;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 0 auto;
-    width: 92vw;             /* 比前面更窄！ */
+    top: 90px;
+    left: 0;
+    right: 0;
+    margin: 0 11vw;      /* 两侧更大留白 */
+    width: auto;
+    max-width: 350px;    /* 更小上限 */
     min-width: 0;
-    max-width: 400px;
-    padding: 13px 5vw 10px 5vw; /* 5vw留白 */
-    border-radius: 13px;
-    box-shadow: 0 6px 28px rgba(0,0,0,0.13);
-    font-size: 15px;
-    gap: 10px;
-    max-height: 73vh;
+    padding: 12px 0 8px 0;
+    border-radius: 11px;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.10);
+    font-size: 13.5px;   /* 再细一点点 */
+    gap: 8px;
+    max-height: 67vh;
     overflow-y: auto;
+    background: rgba(255,255,255,0.99);
   }
   #post-form input[type="text"], #post-form input[type="datetime-local"], #post-form textarea,
   #detail-form input[type="text"], #detail-form input[type="datetime-local"], #detail-form textarea {
-    padding: 8px 8px;
-    border: 1px solid #bbb;
-    border-radius: 6px;
-    font-size: 15px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  #post-form textarea, #detail-form textarea {
-    min-height: 32px;
-    max-height: 62px;
-  }
-  .media-preview img {
-    max-width: 68px;
-    max-height: 41px;
-    margin: 2px 4px 2px 0;
-    border-radius: 5px;
-  }
-  .leaflet-popup-content img {
-    max-width: 93vw !important;
-    border-radius: 6px;
-    margin-top: 4px;
-  }
-  #img-viewer img {
-    max-width: 95vw;
-    max-height: 70vh;
-    border-radius: 10px;
-  }
-  .close-btn, #img-viewer .close-btn {
-    top: 8px !important;
-    right: 8px !important;
-    font-size: 18px !important;
-    border-radius: 100px;
-    background: #fff;
-    color: #444;
-    box-shadow: 0 1px 7px #0002;
-    padding: 1px 10px 1px 8px;
-    z-index: 2102;
-  }
-  .form-actions {
-    gap: 6px;
-    margin-top: 3px;
+    font-size: 13.5px;
+    padding: 6px 8px;
+    border-radius: 4.5px;
   }
   .form-actions button {
-    padding: 7px 12px;
     font-size: 13px;
-    border-radius: 5px;
-    background: #2b7cff;
-    color: #fff;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
+    padding: 7px 14px;
+    border-radius: 4px;
   }
-  .form-actions button:hover { background: #1250a3; }
-
-  .popup-arrow {
-    font-size: 16px;
-    padding: 2px 4vw;
-    border-radius: 5px;
-    margin: 0 1vw;
+  #post-form h3, #detail-form h3 {
+    font-size: 1em;
+    margin-bottom: 4px;
   }
-  .popup-detail-btn {
-    padding: 3px 5vw;
-    font-size: 14px;
-    border-radius: 6px;
-    margin-top: 2px;
+  .media-preview img {
+    max-width: 65px;
+    max-height: 38px;
+    border-radius: 5px;
+  }
+  /* 让地图按钮再多一点距离 */
+  .leaflet-top.leaflet-left {
+    margin-top: 68px !important;
+    margin-left: 13px !important;
   }
 }
