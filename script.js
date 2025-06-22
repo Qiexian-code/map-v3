@@ -64,6 +64,9 @@ function clearPostForm() {
     ["titleInput","addressInput","startTime","endTime","descInput","posterInput","mediaInput"].forEach(id=>document.getElementById(id).value="");
     tempLatLng = null;
     document.getElementById("postMediaPreview").innerHTML = "";
+    document.getElementById("uploadPreview").innerHTML = "";
+    document.getElementById("uploadStatus").innerText = "";
+    document.getElementById("uploadImageInput").value = "";
 }
 function cancelPostForm() { clearPostForm(); document.getElementById("post-form").classList.add("hidden"); }
 
@@ -80,7 +83,7 @@ function geocodeAddress(focus) {
         }).catch(()=>notify("地理编码服务异常，请稍后再试。"));
 }
 
-// ----------- 图片预览 ------------
+// ----------- 图片上传与预览 ------------
 function refreshPostMediaPreview() {
     let input = document.getElementById("mediaInput");
     let preview = document.getElementById("postMediaPreview");
@@ -97,7 +100,6 @@ function refreshPostMediaPreview() {
         }
     });
 }
-
 document.getElementById("uploadImageInput").addEventListener('change', async function(e) {
     const files = Array.from(e.target.files);
     if (!files.length) return;
@@ -111,18 +113,17 @@ document.getElementById("uploadImageInput").addEventListener('change', async fun
         const fileName = `${Date.now()}-${Math.floor(Math.random()*1e6)}.${ext}`;
         // 上传到 Supabase Storage
         const { error } = await supabase.storage
-            .from('activity-images')   // 你的bucket名
+            .from('activity-images')
             .upload(fileName, file, { upsert: false });
         if (error) {
             statusDiv.innerText = "上传失败: " + error.message;
             return;
         }
-        // 取直链（关键！）
+        // 取直链
         const { data } = supabase.storage.from('activity-images').getPublicUrl(fileName);
         const url = data.publicUrl;
         uploadedURLs.push(url);
 
-        // 立即本地预览
         let img = document.createElement("img");
         img.src = url;
         img.alt = "上传图片预览";
@@ -133,7 +134,6 @@ document.getElementById("uploadImageInput").addEventListener('change', async fun
         img.onclick = ()=>showImgViewer(url);
         previewDiv.appendChild(img);
     }
-    // 自动加到“图片URL”输入区（用完整URL而不是文件名）
     let mediaInput = document.getElementById("mediaInput");
     if (mediaInput.value) mediaInput.value += "\n";
     mediaInput.value += uploadedURLs.join("\n");
@@ -189,7 +189,7 @@ async function loadPosts() {
     });
 }
 
-// ----------- Popup 轮播展示（已修复多次点击失效） ------------
+// ----------- Popup 轮播展示 ------------
 function showGroupPopup(marker, groupArr, idx) {
     const post = groupArr[idx];
     let images = post.images || [];
@@ -217,16 +217,12 @@ function showGroupPopup(marker, groupArr, idx) {
         ${nav}
       </div>
     `;
-
-    // 关键：每次切换卡片或marker前强制关闭并解绑popup，再绑定新内容，setTimeout打开
     marker.closePopup();
     marker.unbindPopup();
     marker.bindPopup(popupHtml);
     setTimeout(() => { marker.openPopup(); }, 0);
-
     marker._groupArr = groupArr;
 }
-
 // 轮播切换按钮
 window.prevCard = function(e, markerId) {
     e.stopPropagation();
@@ -257,7 +253,7 @@ window.openDetailFromPopup = function(e, markerId, idx) {
 
 window.onload = loadPosts;
 
-// ----------- 详情表单 ------------
+// ----------- 详情表单（只读/编辑/保存/取消切换 全修正版） ------------
 function showDetailForm(post, groupArr = [post], idx = 0) {
     editingPostId = post.id;
     currentDetailGroup = groupArr;
@@ -268,7 +264,6 @@ function showDetailForm(post, groupArr = [post], idx = 0) {
     document.getElementById("detailEndTime").value = post.end_time || "";
     document.getElementById("detailDesc").value = post.desc || "";
     document.getElementById("detailPoster").value = post.poster || "";
-
     // 图片
     let detailMediaWrap = document.getElementById("detailMediaWrap");
     detailMediaWrap.innerHTML = "";
@@ -282,11 +277,12 @@ function showDetailForm(post, groupArr = [post], idx = 0) {
         img.onclick = e=>{ showImgViewer(url); e.stopPropagation(); };
         detailMediaWrap.appendChild(img);
     });
-
-    // 禁用编辑
-    ["detailTitle","detailAddress","detailStartTime","detailEndTime","detailDesc","detailPoster"].forEach(id=>{
+    // 只读
+    ["detailTitle","detailAddress","detailDesc","detailPoster"].forEach(id=>{
         document.getElementById(id).readOnly = true;
     });
+    document.getElementById("detailStartTime").readOnly = true;
+    document.getElementById("detailEndTime").readOnly = true;
     document.getElementById("detailLocateBtn").disabled = true;
     document.getElementById("detailTimeView").classList.remove("hidden");
     document.getElementById("detailTimeEdit").classList.add("hidden");
@@ -294,7 +290,6 @@ function showDetailForm(post, groupArr = [post], idx = 0) {
     document.getElementById("detailActions").classList.remove("hidden");
     document.getElementById("saveActions").classList.add("hidden");
     document.getElementById("detail-form").classList.remove("hidden");
-
     // 左右切换导航
     let navDiv = document.getElementById("detailNav");
     if (!navDiv) {
@@ -313,7 +308,6 @@ function showDetailForm(post, groupArr = [post], idx = 0) {
         navDiv.innerHTML = '';
     }
 }
-// 详情切换
 window.showPrevDetail = function() {
     if (!currentDetailGroup) return;
     let newIdx = (currentDetailIdx - 1 + currentDetailGroup.length) % currentDetailGroup.length;
@@ -325,8 +319,110 @@ window.showNextDetail = function() {
     showDetailForm(currentDetailGroup[newIdx], currentDetailGroup, newIdx);
 };
 
-// ----------- 详情关闭 ------------
-function hideDetailForm() { document.getElementById("detail-form").classList.add("hidden"); editingPostId = null; }
+// ----------- 编辑详情表单 ------------
+function editDetailPost() {
+    let post = posts.find(x=>x.id===editingPostId);
+    if (!post) return;
+    // 开启输入
+    ["detailTitle","detailAddress","detailDesc","detailPoster"].forEach(id=>{
+        document.getElementById(id).readOnly = false;
+    });
+    document.getElementById("detailLocateBtn").disabled = false;
+    // 时间可编辑
+    document.getElementById("detailTimeView").classList.add("hidden");
+    document.getElementById("detailTimeEdit").classList.remove("hidden");
+    document.getElementById("detailStartTimeEdit").value = post.start_time || "";
+    document.getElementById("detailEndTimeEdit").value = post.end_time || "";
+    // 图片编辑
+    document.getElementById("detailMediaEditWrap").classList.remove("hidden");
+    document.getElementById("detailMediaInput").value = (post.images||[]).join("\n");
+    refreshDetailMediaPreview();
+    document.getElementById("detailMediaWrap").innerHTML = "";
+    document.getElementById("detailActions").classList.add("hidden");
+    document.getElementById("saveActions").classList.remove("hidden");
+}
+
+// 图片编辑区预览
+function refreshDetailMediaPreview() {
+    let input = document.getElementById("detailMediaInput");
+    let preview = document.getElementById("detailMediaEditPreview");
+    if (!input || !preview) return;
+    preview.innerHTML = "";
+    let urls = input.value.split(/[\s,\n]/).filter(Boolean);
+    urls.forEach(url=>{
+        if (isImageURL(url)) {
+            let img = document.createElement("img");
+            img.src = url;
+            img.alt = "预览";
+            img.onclick = ()=>showImgViewer(url);
+            preview.appendChild(img);
+        }
+    });
+}
+
+// 详情定位（可编辑状态下生效）
+function geocodeDetailAddress(focus) {
+    const address = document.getElementById("detailAddress").value.trim();
+    if (!address) return notify("请输入活动地址");
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+        .then(res=>res.json()).then(data=>{
+            if (data.length===0) return notify("未找到该地址，请检查拼写！");
+            const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
+            let post = posts.find(x=>x.id===editingPostId);
+            if (post) post._newLatLng = [lat,lon];
+            if (focus) map.setView([lat, lon], 16);
+        }).catch(()=>notify("地理编码服务异常，请稍后再试。"));
+}
+
+// 保存详情编辑
+async function saveDetailEdit() {
+    let post = posts.find(x=>x.id===editingPostId);
+    if (!post) return;
+    let title = document.getElementById("detailTitle").value.trim();
+    let address = document.getElementById("detailAddress").value.trim();
+    let start_time = document.getElementById("detailStartTimeEdit").value;
+    let end_time = document.getElementById("detailEndTimeEdit").value;
+    let desc = document.getElementById("detailDesc").value.trim();
+    let poster = document.getElementById("detailPoster").value.trim();
+    let mediaInput = document.getElementById("detailMediaInput").value.trim();
+    let images = parseImagesFromInput(mediaInput);
+    let lat = post._newLatLng ? post._newLatLng[0] : post.lat;
+    let lng = post._newLatLng ? post._newLatLng[1] : post.lng;
+    if (!title || !address || !start_time || !end_time) return notify("请填写完整标题、地址和活动时间！");
+    if (start_time > end_time) return notify("开始时间不能晚于结束时间！");
+    let { error } = await supabase.from('activities').update({
+        title, address, start_time, end_time, desc, poster, images, lat, lng
+    }).eq('id', editingPostId);
+    if (error) return notify("修改失败: "+error.message);
+    notify("修改成功！");
+    document.getElementById("detail-form").classList.add("hidden");
+    editingPostId = null;
+    loadPosts();
+}
+
+// 取消编辑，还原为只读
+function cancelDetailEdit() {
+    let post = posts.find(x=>x.id===editingPostId);
+    if (!post) return;
+    showDetailForm(post, currentDetailGroup, currentDetailIdx);
+}
+
+// 删除活动
+async function deleteDetailPost() {
+    if (!confirm("确定要删除此活动吗？")) return;
+    let { error } = await supabase.from('activities').delete().eq('id', editingPostId);
+    if (error) return notify("删除失败: "+error.message);
+    notify("已删除！");
+    document.getElementById("detail-form").classList.add("hidden");
+    editingPostId = null;
+    loadPosts();
+}
+
+// 关闭详情表单
+function hideDetailForm() {
+    document.getElementById("detail-form").classList.add("hidden");
+    editingPostId = null;
+}
 
 // ----------- 图片大图查看 ------------
 function showImgViewer(url) {
