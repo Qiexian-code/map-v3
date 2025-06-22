@@ -88,6 +88,20 @@ body {
     overflow-y: auto;
     border-radius: 16px; /* 可选，兼容内部阴影等 */
 }
+.form-scroll::-webkit-scrollbar {
+  width: 9px;          /* 滚动条宽度 */
+  border-radius: 8px;   /* 与容器圆角一致 */
+  background: transparent;
+}
+.form-scroll::-webkit-scrollbar-thumb {
+  background: #d5dee6;
+  border-radius: 8px;
+  min-height: 44px;
+}
+.form-scroll::-webkit-scrollbar-thumb:hover {
+  background: #b3c5d2;
+}
+
 #post-form input[type="text"], #post-form input[type="datetime-local"], #post-form textarea,
 #detail-form input[type="text"], #detail-form input[type="datetime-local"], #detail-form textarea {
     padding: 7px 11px;
