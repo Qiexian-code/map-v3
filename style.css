@@ -228,13 +228,21 @@ body {
   border-radius: 13px;
   display: block;
 }
-/* ------- 移动端整体适配 ------- */
+/* --- 强制全局盒模型 --- */
+html, body, *, *::before, *::after {
+  box-sizing: border-box !important;
+}
+
+/* ------- 移动端适配 ------- */
 @media (max-width: 700px) {
   html, body {
     font-size: 15px;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    background: #f8fafd;
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
   }
 
   /* 隐藏地图缩放按钮（+/-） */
@@ -250,9 +258,13 @@ body {
     width: 36px;
     border-radius: 10px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    z-index: 2200;
   }
   #logo img {
     border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   /* 顶部时间，居中，宽度收窄 */
@@ -263,9 +275,10 @@ body {
     font-size: 15px;
     padding: 8px 16px;
     border-radius: 8px;
-    min-width: 140px;
+    min-width: 110px;
     max-width: 72vw;
-    box-shadow: 0 3px 14px rgba(0,0,0,0.22);
+    box-shadow: 0 3px 14px rgba(0,0,0,0.13);
+    z-index: 2000;
   }
 
   /* 通知提示 */
@@ -278,6 +291,7 @@ body {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 3000;
   }
 
   /* 发起活动按钮：小巧剧中 */
@@ -285,43 +299,51 @@ body {
     top: 60px;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 2000;
   }
   #post-btn {
     font-size: 15px;
     padding: 7px 18px;
     border-radius: 7px;
     margin: 0;
+    min-width: 0;
   }
 
-  /* 表单弹窗（发帖/详情）：上下左右大留白 */
+  /* 表单弹窗（发帖/详情）：上下左右大留白，极致不贴边 */
   #post-form, #detail-form {
-    width: 92vw;
-    min-width: 0;
-    max-width: 420px;
-    left: 50%;
+    position: fixed !important;
     top: 80px;
-    transform: translateX(-50%);
-    padding: 18px 5vw 12px 5vw;
+    left: 0;
+    right: 0;
+    margin: 0 6vw;
+    width: auto;
+    min-width: 0;
+    max-width: 370px;
+    padding: 16px 0 12px 0;
     border-radius: 13px;
     font-size: 15px;
     gap: 7px;
     box-shadow: 0 5px 26px rgba(0,0,0,0.13);
-    max-height: 82vh;
+    max-height: 80vh;
+    background: rgba(255,255,255,0.99);
+    z-index: 2100;
   }
   #post-form h3, #detail-form h3 {
-    font-size: 1.15em;
-    margin-bottom: 6px;
+    font-size: 1.08em;
+    margin-bottom: 7px;
   }
   #post-form input[type="text"], #post-form input[type="datetime-local"], #post-form textarea,
   #detail-form input[type="text"], #detail-form input[type="datetime-local"], #detail-form textarea {
     font-size: 15px;
     padding: 7px 8px;
     border-radius: 5px;
+    width: 100%;
+    margin-bottom: 0;
   }
   .media-preview img {
-    max-width: 70px;
-    max-height: 45px;
-    margin: 3px 3px 3px 0;
+    max-width: 68px;
+    max-height: 40px;
+    margin: 2px 4px 2px 0;
     border-radius: 5px;
   }
   .form-actions {
@@ -340,7 +362,7 @@ body {
   }
   #img-viewer img {
     max-width: 97vw;
-    max-height: 75vh;
+    max-height: 74vh;
     border-radius: 7px;
   }
 
