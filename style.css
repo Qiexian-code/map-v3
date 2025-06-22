@@ -286,7 +286,7 @@ body {
     box-shadow: 0 2px 9px rgba(0,0,0,0.11);
     letter-spacing: 0.8px;
     min-width: 90px;
-    max-width: 65vw;    /* 明显变窄！ */
+    max-width: 65vw;
     text-align: center;
   }
   #notify {
@@ -303,13 +303,13 @@ body {
     transform: translateX(-50%);
     z-index: 2000;
     flex-direction: row;
-    width: 92vw;
+    width: 90vw;
     justify-content: center;
     align-items: center;
   }
   #post-btn {
     font-size: 15px;
-    padding: 9px 13vw;
+    padding: 9px 11vw;
     border-radius: 7px;
     margin: 0;
     min-width: 0;
@@ -319,21 +319,22 @@ body {
   }
   #post-btn:active { background: #1250a3; }
 
+  /* -------- 关键：弹窗表单左右呼吸感 -------- */
   #post-form, #detail-form {
     position: fixed !important;
     top: 78px;
     left: 50%;
     transform: translateX(-50%);
     margin: 0 auto;
-    width: 91vw;             /* 明显变窄！ */
+    width: 92vw;             /* 比前面更窄！ */
     min-width: 0;
     max-width: 400px;
-    padding: 13px 4vw 10px 4vw;
+    padding: 13px 5vw 10px 5vw; /* 5vw留白 */
     border-radius: 13px;
     box-shadow: 0 6px 28px rgba(0,0,0,0.13);
     font-size: 15px;
     gap: 10px;
-    max-height: 73vh;        /* 留白，不沾满！ */
+    max-height: 73vh;
     overflow-y: auto;
   }
   #post-form input[type="text"], #post-form input[type="datetime-local"], #post-form textarea,
