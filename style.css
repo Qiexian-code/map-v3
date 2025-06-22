@@ -228,148 +228,173 @@ body {
   border-radius: 13px;
   display: block;
 }
-/* --- 强制全局盒模型 --- */
-html, body, *, *::before, *::after {
-  box-sizing: border-box !important;
+/* ------- 全局基础 ------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: Arial, Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: #fafbfc;
 }
 
 /* ------- 移动端适配 ------- */
 @media (max-width: 700px) {
-  html, body {
+  body {
     font-size: 15px;
-    margin: 0;
-    padding: 0;
-    background: #f8fafd;
+    background: #fafbfc;
+  }
+  #map {
     width: 100vw;
     height: 100vh;
-    overflow-x: hidden;
+    min-height: 400px;
   }
 
-  /* 隐藏地图缩放按钮（+/-） */
-  .leaflet-control-zoom {
-    display: none !important;
-  }
-
-  /* logo左上角，微缩，圆角 */
+  /* 顶部logo */
   #logo {
-    top: 12px;
-    left: 14px;
-    height: 36px;
-    width: 36px;
+    position: absolute;
+    top: 10px;
+    left: 16px;
+    height: 38px;
+    width: 38px;
     border-radius: 10px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
-    z-index: 2200;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.10);
+    border: 1.2px solid #e3e6ea;
+    z-index: 2002;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
   }
   #logo img {
-    border-radius: 10px;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 10px;
+    display: block;
   }
 
-  /* 顶部时间，居中，宽度收窄 */
+  /* 顶部时钟 */
   #clock {
-    top: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 15px;
-    padding: 8px 16px;
-    border-radius: 8px;
-    min-width: 110px;
-    max-width: 72vw;
-    box-shadow: 0 3px 14px rgba(0,0,0,0.13);
-    z-index: 2000;
+    top: 13px;
+    left: 58vw;
+    min-width: 142px;
+    font-size: 16px;
+    padding: 6px 18px;
+    border-radius: 9px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
   }
 
-  /* 通知提示 */
+  /* 通知弹窗 */
   #notify {
-    font-size: 13px;
-    min-width: 90px;
-    max-width: 80vw;
-    padding: 7px 12px;
-    border-radius: 0 0 9px 9px;
     top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 3000;
+    min-width: 108px;
+    max-width: 95vw;
+    padding: 7px 14px;
+    border-radius: 0 0 10px 10px;
+    font-size: 14px;
   }
 
-  /* 发起活动按钮：小巧剧中 */
+  /* 发起活动按钮 */
   #post-menu {
-    top: 60px;
+    top: 64px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2000;
+    z-index: 2001;
   }
   #post-btn {
     font-size: 15px;
-    padding: 7px 18px;
-    border-radius: 7px;
-    margin: 0;
-    min-width: 0;
+    padding: 8px 22px;
+    border-radius: 8px;
+    background: #297fff;
+    box-shadow: 0 2px 6px #c2c9d7;
   }
 
-  /* 表单弹窗（发帖/详情）：上下左右大留白，极致不贴边 */
+  /* 表单弹窗样式，仿微信风格 */
   #post-form, #detail-form {
-    position: fixed !important;
-    top: 80px;
-    left: 0;
-    right: 0;
-    margin: 0 6vw;
-    width: auto;
+    position: fixed;
+    top: 56px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 96vw;
+    max-width: 410px;
     min-width: 0;
-    max-width: 370px;
-    padding: 16px 0 12px 0;
-    border-radius: 13px;
+    padding: 20px 0 16px 0;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.13);
     font-size: 15px;
-    gap: 7px;
-    box-shadow: 0 5px 26px rgba(0,0,0,0.13);
-    max-height: 80vh;
-    background: rgba(255,255,255,0.99);
-    z-index: 2100;
+    gap: 10px;
+    border: 1px solid #f0f0f3;
+    max-height: 84vh;
+    overflow-y: auto;
+    z-index: 2101;
+  }
+  #post-form > *, #detail-form > * {
+    margin-left: 18px !important;
+    margin-right: 18px !important;
   }
   #post-form h3, #detail-form h3 {
-    font-size: 1.08em;
-    margin-bottom: 7px;
+    font-size: 1.18em;
+    font-weight: 700;
+    margin-top: 8px;
+    margin-bottom: 11px;
+    padding-left: 2px;
   }
   #post-form input[type="text"], #post-form input[type="datetime-local"], #post-form textarea,
   #detail-form input[type="text"], #detail-form input[type="datetime-local"], #detail-form textarea {
     font-size: 15px;
-    padding: 7px 8px;
-    border-radius: 5px;
-    width: 100%;
-    margin-bottom: 0;
+    padding: 9px 10px;
+    border-radius: 7px;
+    background: #fafbfc;
+    border: 1px solid #eee;
+    margin-bottom: 9px;
   }
-  .media-preview img {
-    max-width: 68px;
-    max-height: 40px;
-    margin: 2px 4px 2px 0;
-    border-radius: 5px;
+  .address-row {
+    display: flex;
+    gap: 7px;
+  }
+  .row-group {
+    margin-bottom: 5px;
   }
   .form-actions {
-    gap: 8px;
-    margin-top: 3px;
+    gap: 14px;
+    margin-top: 13px;
+    margin-bottom: 5px;
+    justify-content: flex-end;
   }
   .form-actions button {
-    font-size: 14px;
-    padding: 7px 12px;
-    border-radius: 5px;
+    font-size: 15px;
+    padding: 9px 23px;
+    border-radius: 7px;
+    background: #2677ff;
+    color: #fff;
+    font-weight: 700;
+    border: none;
+    box-shadow: 0 1px 5px #b9d1ff40;
   }
-  .close-btn {
-    top: 8px;
-    right: 12px;
-    font-size: 19px;
+  .form-actions button:hover {
+    background: #1660c1;
   }
-  #img-viewer img {
-    max-width: 97vw;
-    max-height: 74vh;
+  .media-preview img {
+    max-width: 78px;
+    max-height: 44px;
+    margin: 3px 3px 3px 0;
     border-radius: 7px;
   }
 
-  /* 地图全屏显示 */
-  #map {
-    width: 100vw !important;
-    height: 100vh !important;
-    min-height: 400px;
+  /* 图片大图查看蒙层 */
+  #img-viewer img {
+    max-width: 97vw;
+    max-height: 75vh;
+    border-radius: 10px;
+  }
+
+  /* 隐藏地图缩放按钮（Leaflet默认控件） */
+  .leaflet-control-zoom {
+    display: none !important;
   }
 }
