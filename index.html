@@ -69,52 +69,54 @@
 </div>
 
     <!-- 活动详情表单弹窗（可编辑/定位/删改） -->
-    <div id="detail-form" class="hidden">
-        <div class="form-scroll"></div>
-        <button class="close-btn" onclick="hideDetailForm()" title="关闭">&#10005;</button>
-        <h3>活动详情</h3>
-        <div id="detailNav"></div>
-        <input id="detailTitle" type="text" readonly placeholder="活动标题" />
-        <div class="address-row">
-            <input id="detailAddress" type="text" readonly placeholder="活动地址" />
-            <button type="button" id="detailLocateBtn" onclick="geocodeDetailAddress(true)" disabled>定位</button>
-        </div>
-        <div id="detailTimeView">
-            <div class="row-group">
-                <label for="detailStartTime">开始时间</label>
-                <input id="detailStartTime" type="datetime-local" readonly />
-            </div>
-            <div class="row-group">
-                <label for="detailEndTime">结束时间</label>
-                <input id="detailEndTime" type="datetime-local" readonly />
-            </div>
-        </div>
-        <div id="detailTimeEdit" class="hidden">
-            <div class="row-group">
-                <label for="detailStartTimeEdit">开始时间</label>
-                <input id="detailStartTimeEdit" type="datetime-local" />
-            </div>
-            <div class="row-group">
-                <label for="detailEndTimeEdit">结束时间</label>
-                <input id="detailEndTimeEdit" type="datetime-local" />
-            </div>
-        </div>
-        <textarea id="detailDesc" rows="3" readonly placeholder="活动描述"></textarea>
-        <input id="detailPoster" type="text" readonly placeholder="发帖人" />
-        <div id="detailMediaEditWrap" class="hidden">
-            <textarea id="detailMediaInput" rows="3" placeholder="图片URL（支持多条，换行或空格分隔）" oninput="refreshDetailMediaPreview()"></textarea>
-            <div id="detailMediaEditPreview" class="media-preview"></div>
-        </div>
-        <div id="detailMediaWrap"></div>
-        <div class="form-actions" id="detailActions">
-            <button id="editBtn" onclick="editDetailPost()">修改</button>
-            <button id="deleteBtn" onclick="deleteDetailPost()">删除</button>
-        </div>
-        <div class="form-actions hidden" id="saveActions">
-            <button onclick="saveDetailEdit()">保存</button>
-            <button onclick="cancelDetailEdit()">取消</button>
-        </div>
+<div id="detail-form" class="hidden">
+  <div class="form-scroll">
+    <button class="close-btn" onclick="hideDetailForm()" title="关闭">&#10005;</button>
+    <h3>活动详情</h3>
+    <div id="detailNav"></div>
+    <input id="detailTitle" type="text" readonly placeholder="活动标题" />
+    <div class="address-row">
+      <input id="detailAddress" type="text" readonly placeholder="活动地址" />
+      <button type="button" id="detailLocateBtn" onclick="geocodeDetailAddress(true)" disabled>定位</button>
     </div>
+    <div id="detailTimeView">
+      <div class="row-group">
+        <label for="detailStartTime">开始时间</label>
+        <input id="detailStartTime" type="datetime-local" readonly />
+      </div>
+      <div class="row-group">
+        <label for="detailEndTime">结束时间</label>
+        <input id="detailEndTime" type="datetime-local" readonly />
+      </div>
+    </div>
+    <div id="detailTimeEdit" class="hidden">
+      <div class="row-group">
+        <label for="detailStartTimeEdit">开始时间</label>
+        <input id="detailStartTimeEdit" type="datetime-local" />
+      </div>
+      <div class="row-group">
+        <label for="detailEndTimeEdit">结束时间</label>
+        <input id="detailEndTimeEdit" type="datetime-local" />
+      </div>
+    </div>
+    <textarea id="detailDesc" rows="3" readonly placeholder="活动描述"></textarea>
+    <input id="detailPoster" type="text" readonly placeholder="发帖人" />
+    <div id="detailMediaEditWrap" class="hidden">
+      <textarea id="detailMediaInput" rows="3" placeholder="图片URL（支持多条，换行或空格分隔）" oninput="refreshDetailMediaPreview()"></textarea>
+      <div id="detailMediaEditPreview" class="media-preview"></div>
+    </div>
+    <div id="detailMediaWrap"></div>
+    <div class="form-actions" id="detailActions">
+      <button id="editBtn" onclick="editDetailPost()">修改</button>
+      <button id="deleteBtn" onclick="deleteDetailPost()">删除</button>
+    </div>
+    <div class="form-actions hidden" id="saveActions">
+      <button onclick="saveDetailEdit()">保存</button>
+      <button onclick="cancelDetailEdit()">取消</button>
+    </div>
+  </div>
+</div>
+
 
     <!-- 详细大图预览蒙层 -->
     <div id="img-viewer" class="hidden" onclick="hideImgViewer()">
