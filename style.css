@@ -203,3 +203,24 @@ body {
 .popup-detail-btn:hover {
     background: #d7e2fa;
 }
+#logo {
+  position: absolute;
+  top: 18px;
+  left: 24px;
+  z-index: 2200;  /* 要比地图高，但比popup/表单低 */
+  height: 44px;
+  background: rgba(255,255,255,0.93);
+  border-radius: 10px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+  padding: 6px 14px;
+  /* 可选美化： */
+  /* border: 1px solid #eee; */
+  cursor: pointer;
+}
+@media (max-width: 700px) {
+  #logo {
+    height: 36px;
+    padding: 3px 8px;
+    top: 8px; left: 10px;
+  }
+}
