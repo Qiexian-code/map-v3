@@ -204,23 +204,33 @@ body {
     background: #d7e2fa;
 }
 #logo {
-  position: absolute;
-  top: 18px;
-  left: 24px;
-  z-index: 2200;  /* 要比地图高，但比popup/表单低 */
-  height: 44px;
-  background: rgba(255,255,255,0.93);
-  border-radius: 10px;
-  box-shadow: 0 1px 8px rgba(0,0,0,0.07);
-  padding: 6px 14px;
-  /* 可选美化： */
-  /* border: 1px solid #eee; */
-  cursor: pointer;
+    position: absolute;
+    top: 18px;
+    left: 96px;                  /* 右移，避免遮住地图按钮 */
+    z-index: 2200;
+    height: 44px;
+    width: 44px;                 /* 固定宽高为正方形 */
+    background: rgba(255,255,255,0.36);   /* 半透明磨砂 */
+    border-radius: 14px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.10);
+    padding: 4px;
+    backdrop-filter: blur(6px);          /* 现代感磨砂，支持下会显示 */
+    cursor: pointer;
+    object-fit: cover;
+    border: none;
+    transition: box-shadow 0.18s;
+}
+#logo:hover {
+    box-shadow: 0 4px 16px rgba(50,60,130,0.15);
+    background: rgba(255,255,255,0.46);
 }
 @media (max-width: 700px) {
   #logo {
     height: 36px;
-    padding: 3px 8px;
-    top: 8px; left: 10px;
+    width: 36px;
+    left: 66px;                  /* 小屏幕时稍微右移 */
+    top: 8px;
+    padding: 2.5px;
   }
 }
+
