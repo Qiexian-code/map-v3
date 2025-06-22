@@ -280,12 +280,14 @@ html, body {
   /* 顶部时钟 */
   #clock {
     top: 13px;
-    left: 58vw;
-    min-width: 142px;
-    font-size: 16px;
-    padding: 6px 18px;
-    border-radius: 9px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 0;
+    max-width: 94vw;
+    font-size: 15px;
+    padding: 6px 15px;
+    white-space: nowrap;  /* 保证永远一行 */
+    border-radius: 8px;
   }
 
   /* 通知弹窗 */
