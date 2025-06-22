@@ -95,7 +95,7 @@ function refreshPostMediaPreview() {
             let img = document.createElement("img");
             img.src = url;
             img.alt = "预览";
-            img.onclick = ()=>showImgViewer(url);
+            img.onclick = function(e) { e.stopPropagation(); showImgViewer(url); };
             preview.appendChild(img);
         }
     });
@@ -131,7 +131,7 @@ document.getElementById("uploadImageInput").addEventListener('change', async fun
         img.style.maxHeight = "64px";
         img.style.margin = "4px 6px 4px 0";
         img.style.borderRadius = "7px";
-        img.onclick = ()=>showImgViewer(url);
+        img.onclick = function(e){ e.stopPropagation(); showImgViewer(url); };
         previewDiv.appendChild(img);
     }
     let mediaInput = document.getElementById("mediaInput");
@@ -189,31 +189,33 @@ async function loadPosts() {
     });
 }
 
-// ----------- Popup 轮播展示 ------------
+// ----------- Popup 轮播展示（全内容可点进详情，按钮/图片阻止冒泡） ------------
 function showGroupPopup(marker, groupArr, idx) {
     const post = groupArr[idx];
     let images = post.images || [];
-    let imgTag = images.length > 0 ? `<img src="${images[0]}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;" onclick="showImgViewer('${images[0]}')">` : "";
+    let imgTag = images.length > 0 ? `<img src="${images[0]}" style="max-width:210px;max-height:120px;border-radius:6px;margin-top:6px;cursor:pointer;" onclick="showImgViewer('${images[0]}');event.stopPropagation();">` : "";
     let nav = '';
     if (groupArr.length > 1) {
         nav = `
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:7px;">
-            <button class="popup-arrow" onclick="prevCard(event,${marker._leaflet_id})">&#8592;</button>
+            <button class="popup-arrow" onclick="prevCard(event,${marker._leaflet_id});event.stopPropagation();">&#8592;</button>
             <span style="font-size:14px;">${idx+1}/${groupArr.length}</span>
-            <button class="popup-arrow" onclick="nextCard(event,${marker._leaflet_id})">&#8594;</button>
+            <button class="popup-arrow" onclick="nextCard(event,${marker._leaflet_id});event.stopPropagation();">&#8594;</button>
         </div>`;
     }
     let popupHtml = `
-      <div id="group-popup-${marker._leaflet_id}" class="popup-inner" data-idx="${idx}" data-ids="${groupArr.map(p=>p.id).join(',')}">
+      <div id="group-popup-${marker._leaflet_id}"
+           class="popup-inner"
+           data-idx="${idx}" data-ids="${groupArr.map(p=>p.id).join(',')}"
+           style="cursor:pointer;"
+           onclick="popupContentClick(event, ${marker._leaflet_id}, ${idx})"
+      >
         <b>${post.title}</b><br>
         <span style="color:#357">开始：${formatTime(post.start_time)}<br>结束：${formatTime(post.end_time)}</span><br>
         <span style="color:#888">${post.address}</span><br>
         ${post.desc ? `<div style="margin:5px 0">${post.desc}</div>` : ""}
         ${post.poster ? `<div style="color:#247;font-size:14px;">发帖人：${post.poster}</div>` : ""}
         ${imgTag}
-        <div style="margin-top:8px;">
-          <button class="popup-detail-btn" onclick="openDetailFromPopup(event, ${marker._leaflet_id}, ${idx})">查看详情</button>
-        </div>
         ${nav}
       </div>
     `;
@@ -223,7 +225,8 @@ function showGroupPopup(marker, groupArr, idx) {
     setTimeout(() => { marker.openPopup(); }, 0);
     marker._groupArr = groupArr;
 }
-// 轮播切换按钮
+
+// 轮播按钮阻止冒泡
 window.prevCard = function(e, markerId) {
     e.stopPropagation();
     let marker = Object.values(map._layers).find(l => l._leaflet_id === markerId);
@@ -242,9 +245,10 @@ window.nextCard = function(e, markerId) {
     let newIdx = (idx + 1) % marker._groupArr.length;
     showGroupPopup(marker, marker._groupArr, newIdx);
 };
-// 查看详情
-window.openDetailFromPopup = function(e, markerId, idx) {
-    e.stopPropagation();
+// 内容区点击进入详情，排除按钮和图片
+window.popupContentClick = function(event, markerId, idx) {
+    let t = event.target;
+    if (t.classList.contains("popup-arrow") || t.tagName === 'IMG') return;
     let marker = Object.values(map._layers).find(l => l._leaflet_id === markerId);
     if (!marker || !marker._groupArr) return;
     showDetailForm(marker._groupArr[idx], marker._groupArr, idx);
