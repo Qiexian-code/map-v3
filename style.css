@@ -233,4 +233,102 @@ body {
     padding: 2.5px;
   }
 }
+/* ------- 移动端适配，追加到style.css末尾 ------- */
+@media (max-width: 700px) {
+  html, body {
+    font-size: 15px;
+  }
+
+  #logo {
+    top: 8px;
+    left: 8px;
+    height: 36px;
+    padding: 3px 7px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.89);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.10);
+  }
+
+  #clock {
+    top: 56px;
+    font-size: 16px;
+    min-width: 130px;
+    padding: 8px 14px;
+    border-radius: 8px;
+  }
+
+  #notify {
+    top: 0;
+    font-size: 13px;
+    min-width: 110px;
+    border-radius: 0 0 9px 9px;
+    padding: 7px 10px;
+  }
+
+  #post-menu {
+    top: 92px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  #post-btn {
+    font-size: 15px;
+    padding: 8px 18px;
+    border-radius: 7px;
+  }
+
+  #post-form, #detail-form {
+    width: 98vw;
+    max-width: 400px;
+    min-width: 0;
+    padding: 14px 4vw 10px 4vw;
+    border-radius: 14px;
+    top: 64px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 15px;
+    gap: 7px;
+  }
+  #post-form h3, #detail-form h3 {
+    font-size: 1.12em;
+    margin-bottom: 7px;
+  }
+  #post-form input[type="text"], #post-form input[type="datetime-local"], #post-form textarea,
+  #detail-form input[type="text"], #detail-form input[type="datetime-local"], #detail-form textarea {
+    font-size: 15px;
+    padding: 7px 8px;
+    border-radius: 5px;
+  }
+  .media-preview img {
+    max-width: 76px;
+    max-height: 45px;
+    margin: 3px 3px 3px 0;
+    border-radius: 6px;
+  }
+  .form-actions {
+    gap: 7px;
+    margin-top: 3px;
+  }
+  .form-actions button {
+    font-size: 14px;
+    padding: 7px 12px;
+    border-radius: 5px;
+  }
+  .close-btn {
+    top: 8px;
+    right: 10px;
+    font-size: 19px;
+  }
+  #img-viewer img {
+    max-width: 97vw;
+    max-height: 75vh;
+    border-radius: 8px;
+  }
+
+  /* 让地图全屏不溢出 */
+  #map {
+    width: 100vw;
+    height: 100vh;
+    min-height: 400px;
+  }
+}
 
