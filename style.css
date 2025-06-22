@@ -230,156 +230,151 @@ body {
 }
 
 /* ------- 移动端适配，追加到style.css末尾 ------- */
-@media (max-width: 700px) {
+@media (max-width: 700px), (orientation: portrait) {
   html, body {
-    font-size: 16px;
-    font-family: 'SF Pro Display', 'Roboto', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
-    background: #f7f9fc;
-    margin: 0;
-    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: #f8fafd;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: pan-y;
   }
-  /* ----------- 极简LOGO（圆形） ----------- */
+
+  #map {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    z-index: 0;
+    background: #f8fafd;
+  }
+
   #logo {
     position: absolute;
-    top: 18px;
-    left: 18px;
-    width: 40px; height: 40px;
-    z-index: 2200;
+    top: 13px;
+    left: 14px;
+    width: 42px; height: 42px;
     border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     background: #fff;
-    box-shadow: 0 3px 14px 0 rgba(30,40,60,0.08);
+    z-index: 2200;
+    display: flex; align-items: center; justify-content: center;
     border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
     padding: 0;
   }
-  #logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    display: block;
-  }
-  /* ----------- 缩放按钮下移避免重叠 ----------- */
+  #logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
   .leaflet-top.leaflet-left {
-    margin-top: 78px !important;
+    margin-top: 66px !important;
     margin-left: 6px !important;
   }
-  /* ----------- clock 浮动但极简 ----------- */
+
   #clock {
     position: absolute;
-    top: 18px; left: 0; right: 0;
-    z-index: 2100;
-    width: fit-content;
+    top: 13px; left: 0; right: 0;
     margin: 0 auto;
-    min-width: 96px;
-    background: rgba(45,45,66,0.66);
-    color: #fff;
-    border-radius: 20px;
+    min-width: 98px;
+    max-width: 60vw;
+    padding: 6px 15px;
     font-size: 15px;
-    font-weight: 500;
-    padding: 5px 18px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    letter-spacing: 1.1px;
+    background: rgba(28,30,36,0.68);
+    border-radius: 17px;
+    color: #fff;
+    box-shadow: 0 1px 7px rgba(0,0,0,0.07);
+    z-index: 2100;
     text-align: center;
     pointer-events: none;
-    opacity: 0.93;
+    opacity: 0.95;
   }
-  /* ----------- 发起活动按钮：大圆角悬浮 ----------- */
+
   #post-menu {
     position: absolute;
-    top: 80px;
-    left: 0; right: 0;
-    margin: 0 auto;
+    top: 74px; left: 0; right: 0;
     z-index: 2100;
     display: flex;
     justify-content: center;
-    width: 100vw;
     pointer-events: none;
   }
   #post-btn {
     pointer-events: auto;
-    font-size: 16px;
-    border-radius: 14px;
-    padding: 12px 28px;
-    background: linear-gradient(90deg,#4096ff 80%, #60c0ff 100%);
+    font-size: 17px;
+    padding: 10px 30px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #429fff 80%, #69d2fd 100%);
     color: #fff;
-    font-weight: bold;
     border: none;
-    box-shadow: 0 1px 9px 0 rgba(30,40,60,0.11);
+    box-shadow: 0 2px 14px 0 rgba(30,40,60,0.09);
+    font-weight: 700;
     transition: background 0.17s;
   }
-  #post-btn:active { background: linear-gradient(90deg,#326ee0 80%, #62bbfd 100%); }
-  /* ----------- 细节弹窗（表单、图片）优化 ----------- */
+  #post-btn:active { background: #2c8ae0; }
+
   #post-form, #detail-form {
+    position: fixed !important;
+    top: 98px; left: 0; right: 0;
+    margin: 0 auto;
     width: 97vw;
-    max-width: 410px;
-    min-width: 0;
-    padding: 13px 3vw 12px 3vw;
-    border-radius: 16px;
-    top: 98px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 15px;
-    gap: 7px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.10);
+    max-width: 430px;
+    border-radius: 17px;
     background: #fff;
+    z-index: 2300;
+    font-size: 16px;
+    box-shadow: 0 10px 36px rgba(0,0,0,0.13);
+    padding: 17px 4vw 13px 4vw;
+    overflow-y: auto;
+    max-height: 86vh;
   }
-  #post-form h3, #detail-form h3 {
-    font-size: 1.13em;
-    margin-bottom: 10px;
-  }
-  #post-form input[type="text"], #post-form input[type="datetime-local"], #post-form textarea,
-  #detail-form input[type="text"], #detail-form input[type="datetime-local"], #detail-form textarea {
-    font-size: 15px;
-    padding: 7px 8px;
-    border-radius: 9px;
-    border: 1.1px solid #e9e9f1;
-    background: #f8fafc;
-  }
-  .media-preview img {
-    max-width: 90px;
-    max-height: 54px;
-    margin: 4px 5px 3px 0;
+  #post-form h3, #detail-form h3 { font-size: 1.16em; margin-bottom: 9px; }
+  #post-form input, #detail-form input, #post-form textarea, #detail-form textarea {
+    font-size: 16px;
+    padding: 8px 10px;
     border-radius: 8px;
+    border: 1.2px solid #e5e9f1;
+    background: #f9fafb;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 6px;
   }
-  .form-actions {
-    gap: 9px;
-    margin-top: 6px;
-  }
+  .media-preview img { max-width: 84px; max-height: 46px; border-radius: 8px; }
+  .form-actions { gap: 8px; }
   .form-actions button {
-    font-size: 15px;
-    padding: 8px 18px;
-    border-radius: 7px;
+    font-size: 16px;
+    padding: 8px 17px;
+    border-radius: 8px;
     border: none;
     background: #eee;
-    color: #222;
+    color: #26354d;
     font-weight: 500;
   }
   .form-actions button:first-child {
-    background: #4088ff;
+    background: #3a99ff;
     color: #fff;
   }
   .close-btn {
-    top: 13px;
-    right: 15px;
-    font-size: 22px;
+    top: 13px; right: 13px;
+    font-size: 23px;
     background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    border-radius: 18px;
+    box-shadow: 0 2px 7px rgba(0,0,0,0.08);
     border: none;
-    color: #888;
+    color: #777;
+    z-index: 2400;
   }
   #img-viewer img {
-    max-width: 97vw;
-    max-height: 78vh;
+    max-width: 96vw;
+    max-height: 80vh;
     border-radius: 11px;
+    box-shadow: 0 1px 14px rgba(0,0,0,0.18);
   }
-  #map {
-    width: 100vw;
-    height: 100vh;
-    min-height: 400px;
+
+  /* 禁止页面横向滚动 */
+  body { overflow-x: hidden; }
+
+  /* 保证弹窗/时钟/logo/按钮等不被地图操作层遮挡 */
+  [class^="leaflet-"], [class*=" leaflet-"] {
+    touch-action: manipulation;
   }
 }
